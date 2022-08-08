@@ -19,16 +19,22 @@ huh <- function(x) {
     0L,
     ifelse(is.null(dims) && is.vector(x), 1L, dims))
 
-# TODO: S4 classes
-# TODO: R6 classes
+  xClass <- class(x)
+  attributes(xClass) <- NULL
+  xParadigm <-
+    if(is.null(attr(x, "class"))) "implicit"
+  else if (isS4(x)) ifelse(inherits(x, "refClass"), "Reference class", "S4 class")
+  else if (inherits(x, "R6")) "R6 class"
+  else if (length(xClass) > 0) "S3 class"
+  else "Unknown"
 
   y <- list(
     type = typeof(x),
-    classS3 = class(x),
+    class = xClass,
     mode = mode(x),
-    dimensions = dims
+    dimensions = dims,
+    paradigm = xParadigm
   )
-
   class(y) <- "huh"
 
   return(y)
