@@ -52,7 +52,7 @@ huh <- function(x) {
 #'
 #' @examples
 #' print(huh(1:3))
-print.huh <- function(x) {
+print.huh <- function(x, ...) {
   lwidth <- max(nchar(names(x)))
   mapply(
     \(y, n) cat(format(n, width=lwidth), ":", y, "\n"),

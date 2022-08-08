@@ -4,7 +4,7 @@
 \alias{print.huh}
 \title{print.huh}
 \usage{
-\method{print}{huh}(x)
+\method{print}{huh}(x, ...)
 }
 \arguments{
 \item{x}{A \code{huh} object}
