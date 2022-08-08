@@ -17,6 +17,7 @@ test_that("vector, integer", {
   expect_identical(
     result,
     makeHuhList(
+      name = "obj",
       type = "integer",
       class = "integer",
       mode = "numeric",
@@ -39,6 +40,7 @@ test_that("matrix", {
   expect_identical(
     result,
     makeHuhList(
+      name = "obj",
       type = "integer",
       class = c("matrix", "array"),
       mode = "numeric",
@@ -47,6 +49,30 @@ test_that("matrix", {
     )
   )
 })
+
+
+
+test_that("data frame", {
+  obj <- mtcars
+  expect(isTRUE(is.data.frame(obj)), "Test failed assumption")
+
+  # act
+  result <- huh(obj)
+
+  # assert
+  expect_identical(
+    result,
+    makeHuhList(
+      name = "obj",
+      type = "list",
+      class = "data.frame",
+      mode = "list",
+      dimensions = 2L,
+      paradigm = "S3 class"
+    )
+  )
+})
+
 
 
 test_that("function", {
@@ -60,6 +86,7 @@ test_that("function", {
   expect_identical(
     result,
     makeHuhList(
+      name = "obj",
       type = "closure",
       class = "function",
       mode = "function",
@@ -82,6 +109,7 @@ test_that("symbol", {
   expect_identical(
     result,
     makeHuhList(
+      name = "obj",
       type = "symbol",
       class = "name",
       mode = "name",
@@ -105,6 +133,7 @@ test_that("S4", {
   expect_identical(
     result,
     makeHuhList(
+      name = "obj",
       type = "S4",
       class = "student",
       mode = "S4",
@@ -128,6 +157,7 @@ test_that("Reference class", {
   expect_identical(
     result,
     makeHuhList(
+      name = "obj",
       type = "S4",
       class = "Account",
       mode = "S4",

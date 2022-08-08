@@ -14,21 +14,23 @@
 #' huh(1:3)
 huh <- function(x) {
   dims <- dim(x)
-  dims <- ifelse(
-    is.null(dims) && !is.vector(x),
-    0L,
-    ifelse(is.null(dims) && is.vector(x), 1L, dims))
+  dims <-
+    if (is.null(dims))
+      if (!is.vector(x)) 0L
+      else 1L
+    else length(dims)
 
   xClass <- class(x)
   attributes(xClass) <- NULL
   xParadigm <-
-    if(is.null(attr(x, "class"))) "implicit"
-  else if (isS4(x)) ifelse(inherits(x, "refClass"), "Reference class", "S4 class")
-  else if (inherits(x, "R6")) "R6 class"
-  else if (length(xClass) > 0) "S3 class"
-  else "Unknown"
+    if (is.null(attr(x, "class"))) "implicit"
+    else if (isS4(x)) ifelse(inherits(x, "refClass"), "Reference class", "S4 class")
+    else if (inherits(x, "R6")) "R6 class"
+    else if (length(xClass) > 0) "S3 class"
+    else "unknown"
 
   y <- list(
+    name = deparse(substitute(x)),
     type = typeof(x),
     class = xClass,
     mode = mode(x),
