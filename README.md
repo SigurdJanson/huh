@@ -1,8 +1,9 @@
-huh?
-================
-2022-08-08
+2022-08-09
 
-<!-- README.md is generated from README.Rmd. Please edit that file. -->
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# huh
+
 <!-- badges: start -->
 
 [![Lifecycle:
@@ -13,14 +14,15 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 R objects can be … “shady”. There is a large variety of objects. Though
 they may look similar the difference can make their handling quite
-difficult.
+difficult. For newbies it can be quite confusing, even intimidating.
 
 The “huh?” package wants to describe objects to make it easier to
 understand what they contain and how to handle them.
 
-## HUH?
+## Example
 
 ``` r
+library(huh)
 huh(1:3)
 #> name       : 1:3 
 #> type       : integer 
@@ -45,4 +47,19 @@ huh(mean)
 #> paradigm   : implicit
 ```
 
+## Installation
+
+You can install the development version of huh from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("SigurdJanson/huh")
+```
+
 <!-- `huh` distinguishes different OOP paradigms with the field `paradigm`. -->
+
+## Sources
+
+<http://adv-r.had.co.nz/OO-essentials.html>
+<https://adv-r.hadley.nz/oo.html>
