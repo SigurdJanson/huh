@@ -13,6 +13,8 @@
 #' huh(mean)
 #' huh(1:3)
 huh <- function(x) {
+  if (is.null(x)) return(NULL)
+
   dims <- dim(x)
   dims <-
     if (is.null(dims))
@@ -55,11 +57,12 @@ huh <- function(x) {
 #' @examples
 #' print(huh(1:3))
 print.huh <- function(x, ...) {
-  lwidth <- max(nchar(names(x)))
-  mapply(
-    \(y, n) cat(format(n, width=lwidth), ":", y, "\n"),
-    x,
-    names(x))
+  .print <- function(x, nx) {
+    if (nx == "class") x <- paste(x, sep = ", ")
+    cat(format(nx, width=lwidth, ...), ": ", x, "\n", sep="")
+  }
 
+  lwidth <- max(nchar(names(x)))
+  mapply(.print, x, names(x))
   return(invisible(x))
 }

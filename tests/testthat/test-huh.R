@@ -6,6 +6,8 @@ makeHuhList <- function(...) {
   x
 }
 
+
+
 test_that("vector, integer", {
   obj <- c(3L, 5L, 7L)
   expect(isTRUE(is.integer(obj)), "Test failed assumption")
@@ -27,6 +29,28 @@ test_that("vector, integer", {
   )
 })
 
+
+
+test_that("factor, character", {
+  obj <- factor(sample(LETTERS[1:3], 12, TRUE))
+  expect(isTRUE(is.factor(obj)), "Test failed assumption")
+
+  # act
+  result <- huh(obj)
+
+  # assert
+  expect_identical(
+    result,
+    makeHuhList(
+      name = "obj",
+      type = "integer",
+      class = "factor",
+      mode = "numeric",
+      dimensions = 0L,
+      paradigm = "S3 class"
+    )
+  )
+})
 
 
 test_that("matrix", {
@@ -165,4 +189,13 @@ test_that("Reference class", {
       paradigm = "Reference class"
     )
   )
+})
+
+
+test_that("NULL", {
+  # act
+  result <- huh(NULL)
+
+  # assert
+  expect_identical(result, NULL)
 })
