@@ -5,6 +5,7 @@
 #' @param x An object
 #' @return Is x an implicit, S3, S4, RC, or R6 object.
 #' @keywords internal
+#' @noRd
 .paradigm <- function(x) {
   xClass <- class(x)
 
@@ -14,6 +15,7 @@
   else if (length(xClass) > 0) "S3 class"
   else "unknown"
 }
+
 
 
 #' huh
