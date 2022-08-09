@@ -1,5 +1,21 @@
 
 
+#' Determine the OOP paradigm of an object.
+#'
+#' @param x An object
+#' @return Is x an implicit, S3, S4, RC, or R6 object.
+#' @keywords internal
+.paradigm <- function(x) {
+  xClass <- class(x)
+
+  if (is.null(attr(x, "class"))) "implicit"
+  else if (isS4(x)) ifelse(inherits(x, "refClass"), "Reference class", "S4 class")
+  else if (inherits(x, "R6")) "R6 class"
+  else if (length(xClass) > 0) "S3 class"
+  else "unknown"
+}
+
+
 #' huh
 #'
 #' Creates a detailed summary of the nature of an object.
@@ -24,12 +40,6 @@ huh <- function(x) {
 
   xClass <- class(x)
   attributes(xClass) <- NULL
-  xParadigm <-
-    if (is.null(attr(x, "class"))) "implicit"
-    else if (isS4(x)) ifelse(inherits(x, "refClass"), "Reference class", "S4 class")
-    else if (inherits(x, "R6")) "R6 class"
-    else if (length(xClass) > 0) "S3 class"
-    else "unknown"
 
   y <- list(
     name = deparse(substitute(x)),
@@ -37,7 +47,7 @@ huh <- function(x) {
     class = xClass,
     mode = mode(x),
     dimensions = dims,
-    paradigm = xParadigm
+    paradigm = .paradigm(x)
   )
   class(y) <- "huh"
 
