@@ -2,13 +2,15 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# huh
+<img src="vignettes/img/logo_huh.svg" align="right" width="20%"/>
 
 <!-- badges: start -->
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
+
+# huh
 
 ## What It Does
 
