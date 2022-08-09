@@ -46,7 +46,7 @@ test_that("factor, character", {
       type = "integer",
       class = "factor",
       mode = "numeric",
-      dimensions = 0L,
+      dimensions = 1L,
       paradigm = "S3 class"
     )
   )

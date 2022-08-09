@@ -34,7 +34,7 @@ huh <- function(x) {
   dims <- dim(x)
   dims <-
     if (is.null(dims))
-      if (!is.vector(x)) 0L
+      if (!is.vector(x) && !is.atomic(x)) 0L
       else 1L
     else length(dims)
 
