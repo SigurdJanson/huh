@@ -27,3 +27,12 @@ library(huh)
 # Function Objects
 
 
+# Special Issues
+
+## How to get an exhaustive list of internal S3 generics?
+
+The `tools` package provides `.get_internal_S3_generics()`. This function does not seem to be safe. Many generics are hard-coded. But how can this be solved? 
+
+1. `tools:::.get_internal_S3_generics` calls `tools:::.get_S3_primitive_generics()`. This function combines `base::.S3PrimitiveGenerics` with another list of hard-coded names. However, these hard-coded function names are **all included** in `names(.GenericArgsEnv)`. According to [R Internals: "Prototypes for primitives"](https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Prototypes-for-primitives) `names(.GenericArgsEnv)` is an environment in the base package for those primitives which are internal S3 generics. And indeed, it provides all function names that `tools:::.get_S3_primitive_generics()` also gives and more (i.e. `log2` and `log10`). Hence, this part of the tools function can be replaced.
+
+2. That leaves the hard-coded function names in `tools:::.get_internal_S3_generics`. 
