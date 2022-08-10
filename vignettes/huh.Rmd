@@ -1,0 +1,29 @@
+---
+title: "Huh!?"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Huh!?}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(huh)
+```
+
+# Data Objects
+
+## Subsetting
+
+
+
+# Function Objects
+
+
