@@ -78,6 +78,19 @@ how.default <- function(x) {
 }
 
 
+#' @describeIn how For lists
+#' @export
+how.list <- function(x) {
+  new_huh.how(
+    name = deparse(substitute(x)),
+    list(
+      list = c("[c(...)]"),
+      reduced = c("[[...]]", "$...")
+    ),
+    comments = NULL
+  )
+}
+
 
 
 #' @describeIn how For arrays
@@ -91,9 +104,9 @@ how.array <- function(x) {
       array  = c("[c(...), c(...), c(...)]")
     ),
     comments = c("Class will be reduced to leanest possible type. I.e. ...",
-      "* 1D results yield atomic vectors,",
-      "* 2D results class 'matrix' AND 'array';",
-      "* 3D results are arrays.")
+      "* 1-dim results yield atomic vectors,",
+      "* 2-dim results class 'matrix' AND 'array';",
+      "* 3-dim results are arrays.")
   )
 }
 

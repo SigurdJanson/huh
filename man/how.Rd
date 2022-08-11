@@ -3,6 +3,7 @@
 \name{how}
 \alias{how}
 \alias{how.default}
+\alias{how.list}
 \alias{how.array}
 \alias{how.data.frame}
 \alias{how.complex}
@@ -11,6 +12,8 @@
 how(x)
 
 \method{how}{default}(x)
+
+\method{how}{list}(x)
 
 \method{how}{array}(x)
 
@@ -30,6 +33,8 @@ Prints how an object can be subset
 \section{Methods (by class)}{
 \itemize{
 \item \code{how(default)}: Default handler
+
+\item \code{how(list)}: For lists
 
 \item \code{how(array)}: For arrays
 
