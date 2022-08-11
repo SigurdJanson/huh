@@ -25,7 +25,7 @@ how(x)
 \code{invisible(x)}
 }
 \description{
-how
+Prints how an object can be subset
 }
 \section{Methods (by class)}{
 \itemize{

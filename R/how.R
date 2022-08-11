@@ -1,6 +1,4 @@
 
-
-
 #' how
 #'
 #' Prints how an object can be subset
@@ -12,23 +10,51 @@
 #'
 #' @examples
 #' how(matrix(1:4, 2))
-how <- function(x)
-  UseMethod("how")
+how <- function(x) UseMethod("how")
 
 
 #' @describeIn how Default handler
 #' @export
 how.default <- function(x) {
   if (is.atomic(x)) {
-    how_atomic(x)
+    .how_atomic(x)
   } else {
-    cat("Object not subsettable")
+    xclass <- attr(x, "class")
+    if (!is.null(xclass)) {
+      single <- sapply(xclass, \(y) getS3method("[", y, optional=TRUE))
+      double <- sapply(xclass, \(y) getS3method("[[", y, optional=TRUE))
+      dollar <- sapply(xclass, \(y) getS3method("$", y, optional=TRUE))
+
+      msg <- "Supported subset operators:\n"
+      oname <- deparse(substitute(x))
+      if (!is.null(single)) {
+        msg <- paste0(msg, " ", oname, "[c(...)]", "\n")
+      }
+      if (!is.null(double)) {
+        msg <- paste0(msg, " ", oname, "[[...]]", "\n")
+      }
+      if (!is.null(dollar)) {
+        msg <- paste0(msg, " ", oname, "$...", "\n")
+      }
+      cat(msg)
+    } else {
+      cat("Object not subsettable")
+    }
   }
   invisible(x)
 }
 
 
-how_atomic <- function(x) {
+#' .how_atomic
+#'
+#' Helper for `how.default` that handles the case of atomic vectors
+#'
+#' @param x an atomic vector
+#'
+#' @return NULL
+#' @keywords internal
+#' @noRd
+.how_atomic <- function(x) {
   print_handling.1d.atomic(x, deparse(substitute(x)))
 
   cat("Result: ATOMIC VECTOR", "\n")
@@ -76,8 +102,8 @@ how.complex <- function(x) {
 #' .formatprint
 #'
 #' @param labels Labels to print, one for each statement
-#' @param statements
-#' @param ...
+#' @param statements Statements documenting possible ways to subset the object
+#' @param ... Additional arguments passed on to `format()`.
 #'
 #' @return `invisible(NULL)`
 #' @keywords internal
