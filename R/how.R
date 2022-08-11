@@ -24,6 +24,7 @@ how <- function(x) UseMethod("how")
 
 
 #' @describeIn how Default handler
+#' @importFrom utils getS3method
 #' @export
 how.default <- function(x) {
   if (is.atomic(x)) {
@@ -70,11 +71,18 @@ how.default <- function(x) {
 .how_atomic <- function(x) {
   hasattrs <- !is.null(attributes(x))
 
-  new_huh.how(
-    name = deparse(substitute(x)),
-    list(vector = c("[", "[[")),
-    comments = ifelse(hasattrs, "Access meta data using the function 'attr()'", NULL)
-  )
+  if (hasattrs)
+    result <- new_huh.how(
+      name = deparse(substitute(x)),
+      list(vector = c("[", "[[")),
+      comments = "Access meta data using the function 'attr()'"
+    )
+  else
+    result <- new_huh.how(
+      name = deparse(substitute(x)),
+      list(vector = c("[", "[["))
+    )
+  return(result)
 }
 
 
