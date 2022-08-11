@@ -1,11 +1,21 @@
 
+new_huh.how <- function(name, data, comments = NULL) {
+  structure(
+    c(
+      name = name, data, comments
+    ),
+    class = "huh.how"
+  )
+  return(data)
+}
+
 #' how
 #'
 #' Prints how an object can be subset
 #'
 #' @param x An object
 #'
-#' @return `invisible(x)`
+#' @return An object of class `huh.how`.
 #' @export
 #'
 #' @examples
@@ -17,7 +27,7 @@ how <- function(x) UseMethod("how")
 #' @export
 how.default <- function(x) {
   if (is.atomic(x)) {
-    .how_atomic(x)
+    result <- .how_atomic(x)
   } else {
     xclass <- attr(x, "class")
     if (!is.null(xclass)) {
@@ -25,23 +35,26 @@ how.default <- function(x) {
       double <- sapply(xclass, \(y) getS3method("[[", y, optional=TRUE))
       dollar <- sapply(xclass, \(y) getS3method("$", y, optional=TRUE))
 
-      msg <- "Supported subset operators:\n"
-      oname <- deparse(substitute(x))
-      if (!is.null(single)) {
-        msg <- paste0(msg, " ", oname, "[c(...)]", "\n")
-      }
-      if (!is.null(double)) {
-        msg <- paste0(msg, " ", oname, "[[...]]", "\n")
-      }
-      if (!is.null(dollar)) {
-        msg <- paste0(msg, " ", oname, "$...", "\n")
-      }
-      cat(msg)
+      result <-
+        new_huh.how(
+          name = deparse(substitute(x)),
+          list(
+            c("[c(...)]"),
+            c("[[...]]"),
+            c("$...")
+          ),
+          comments = "Return types cannot be determined"
+      )
     } else {
-      cat("Object not subsettable")
+      result <-
+        new_huh.how(
+          name = deparse(substitute(x)),
+          list(),
+          comments = "Object not subsettable"
+        )
     }
   }
-  invisible(x)
+  return(result)
 }
 
 
@@ -51,18 +64,17 @@ how.default <- function(x) {
 #'
 #' @param x an atomic vector
 #'
-#' @return NULL
+#' @return An object of class `huh.how`.
 #' @keywords internal
 #' @noRd
 .how_atomic <- function(x) {
-  print_handling.1d.atomic(x, deparse(substitute(x)))
+  hasattrs <- !is.null(attributes(x))
 
-  cat("Result: ATOMIC VECTOR", "\n")
-  if (!is.null(attributes(x))) {
-    cat("\n")
-    cat('Access meta data using the function "attr( attributename )"', "\n")
-  }
-  cat("\n")
+  new_huh.how(
+    name = deparse(substitute(x)),
+    list(vector = c("[", "[[")),
+    comments = ifelse(hasattrs, "Access meta data using the function 'attr()'", NULL)
+  )
 }
 
 
@@ -71,10 +83,18 @@ how.default <- function(x) {
 #' @describeIn how For arrays
 #' @export
 how.array <- function(x) {
-  cat("one-dimensional access\n")
-  print_handling.1d.atomic(x, deparse(substitute(x)))
-  cat("multi-dimensional access\n")
-  print_handling.nd.atomic(x, deparse(substitute(x)))
+  new_huh.how(
+    name = deparse(substitute(x)),
+    list(
+      vector = c("[c(...)]", "[c(...), ..., ...]", "[[...]]"),
+      matrix = c("[c(...), c(...), ...]"),
+      array  = c("[c(...), c(...), c(...)]")
+    ),
+    comments = c("Class will be reduced to leanest possible type. I.e. ...",
+      "* 1D results yield atomic vectors,",
+      "* 2D results class 'matrix' AND 'array';",
+      "* 3D results are arrays.")
+  )
 }
 
 # how.matrix <- function(x) {
@@ -91,10 +111,11 @@ how.data.frame <- function(x) {
 #' @describeIn how Complex numbers
 #' @export
 how.complex <- function(x) {
-  NextMethod("how", x)
+  result <- NextMethod("how", x)
 
-  cat('Access the real and imaginary part using the functions "Re()" and "Im()"', "\n")
-  cat("\n")
+  result$comments <- append(
+    result$comments, "Access the real and imaginary part using the functions 'Re()' and 'Im()'")
+  return(result)
 }
 
 
@@ -118,46 +139,46 @@ how.complex <- function(x) {
   invisible(NULL)
 }
 
-print_handling.1d.atomic <- function(x, oname) {
-  labels    <- c("Single element", "Multi-access")
-  statement <- paste(oname, c("[index]", "[c(1, ...)]"), sep = "")
+# print_handling.1d.atomic <- function(x, oname) {
+#   labels    <- c("Single element", "Multi-access")
+#   statement <- paste(oname, c("[index]", "[c(1, ...)]"), sep = "")
+#
+#   .formatprint(labels, statement)
+#   cat("Result: ATOMIC VECTOR\n")
+#
+#   return(invisible(NULL))
+# }
 
-  .formatprint(labels, statement)
-  cat("Result: ATOMIC VECTOR\n")
-
-  return(invisible(NULL))
-}
-
-print_handling.2d.atomic <- function(x, oname) {
-  labels    <- c("Single element", "Whole row", "Whole column",
-                 "Row subset", "Column subset")
-  statement <- c("[row, col]", "[row, ]", "[, col]", "[row, c(col1, ...)]", "[c(row1, ...), column]")
-  statement <- paste(oname, statement, sep = "")
-  .formatprint(labels, statement)
-  cat("Result: ATOMIC VECTOR\n")
-
-  labels    <- c("Any multi-access")
-  statement <- paste(oname, c("[c(row1, row2, ...), c(col1, col2, ...)]"), sep = "")
-  .formatprint(labels, statement)
-  cat("> Result: MATRIX / ARRAY\n")
-
-  return(invisible(NULL))
-}
+# print_handling.2d.atomic <- function(x, oname) {
+#   labels    <- c("Single element", "Whole row", "Whole column",
+#                  "Row subset", "Column subset")
+#   statement <- c("[row, col]", "[row, ]", "[, col]", "[row, c(col1, ...)]", "[c(row1, ...), column]")
+#   statement <- paste(oname, statement, sep = "")
+#   .formatprint(labels, statement)
+#   cat("Result: ATOMIC VECTOR\n")
+#
+#   labels    <- c("Any multi-access")
+#   statement <- paste(oname, c("[c(row1, row2, ...), c(col1, col2, ...)]"), sep = "")
+#   .formatprint(labels, statement)
+#   cat("> Result: MATRIX / ARRAY\n")
+#
+#   return(invisible(NULL))
+# }
 
 
-print_handling.nd.atomic <- function(x, oname) {
-  labels    <- c("Single element", "Whole row", "Whole column")
-  statement <- c("[row, col, ...]", "[row, , ]", "[, col, ]")
-  statement <- paste(oname, statement, sep = "")
-  .formatprint(labels, statement)
-  cat("> Result: ATOMIC VECTOR\n")
-
-  labels    <- c("Row subset", "Column subset", "Any multi-access")
-  statement <- c("[row, col, ...]", "[row, , ]", "[, col, ]")
-  statement <- paste(oname, statement, sep = "")
-
-  .formatprint(labels, statement)
-  cat("> Result: MATRIX / ARRAY\n")
-
-  return(invisible(NULL))
-}
+# print_handling.nd.atomic <- function(x, oname) {
+#   labels    <- c("Single element", "Whole row", "Whole column")
+#   statement <- c("[row, col, ...]", "[row, , ]", "[, col, ]")
+#   statement <- paste(oname, statement, sep = "")
+#   .formatprint(labels, statement)
+#   cat("> Result: ATOMIC VECTOR\n")
+#
+#   labels    <- c("Row subset", "Column subset", "Any multi-access")
+#   statement <- c("[row, col, ...]", "[row, , ]", "[, col, ]")
+#   statement <- paste(oname, statement, sep = "")
+#
+#   .formatprint(labels, statement)
+#   cat("> Result: MATRIX / ARRAY\n")
+#
+#   return(invisible(NULL))
+# }

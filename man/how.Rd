@@ -22,7 +22,7 @@ how(x)
 \item{x}{An object}
 }
 \value{
-\code{invisible(x)}
+An object of class \code{huh.how}.
 }
 \description{
 Prints how an object can be subset
