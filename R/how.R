@@ -158,7 +158,16 @@ how.matrix <- function(x) {
 #' @describeIn how For data frames
 #' @export
 how.data.frame <- function(x) {
-  NextMethod("how", x)
+  new_huh.how(
+    .name = deparse(substitute(x)),
+    .ops = list(
+      scalar = c("[..., ...]"),
+      `column(s) as list` = c("[c(...)]"),
+      `column(s) as atomic` = c("[[...]]", "[, ...]", "$..."),
+      `data frame`= c("[c(...), c(...)]")
+    ),
+    .comments = "2-dimensional subsetting returns a data frame"
+  )
 }
 
 
@@ -167,11 +176,14 @@ how.data.frame <- function(x) {
 how.complex <- function(x) {
   result <- NextMethod("how", x)
 
+  result$name <- deparse(substitute(x))
   result$comments <- append(
     result$comments, "Access the real and imaginary part using the functions 'Re()' and 'Im()'")
   return(result)
 }
 
+
+# TODO: Add factor ##################
 
 
 #' .formatprint
@@ -193,15 +205,7 @@ how.complex <- function(x) {
   invisible(NULL)
 }
 
-# print_handling.1d.atomic <- function(x, oname) {
-#   labels    <- c("Single element", "Multi-access")
-#   statement <- paste(oname, c("[index]", "[c(1, ...)]"), sep = "")
-#
-#   .formatprint(labels, statement)
-#   cat("Result: ATOMIC VECTOR\n")
-#
-#   return(invisible(NULL))
-# }
+
 
 # print_handling.2d.atomic <- function(x, oname) {
 #   labels    <- c("Single element", "Whole row", "Whole column",

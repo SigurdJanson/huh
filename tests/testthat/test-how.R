@@ -54,4 +54,79 @@ test_that("list", {
   expect_null(result$comments)
 })
 
+# ARRAY  ==============
 
+
+test_that("array", {
+  obj <- array(1:24, c(4, 3, 2))
+  expect(isTRUE(is.array(obj)), "Test failed assumption")
+
+  # act
+  result <- how(obj)
+
+  # assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "obj")
+  expect_named(result$ops, c("vector", "matrix", "array"))
+  # MAYBE TEST CONTENT HERE
+  expect_length(result$comments, 4L)
+})
+
+
+
+# MATRIX ==============
+
+test_that("matrix", {
+  obj <- matrix(1:12, c(4, 3))
+  expect(isTRUE(is.matrix(obj)), "Test failed assumption")
+
+  # act
+  result <- how(obj)
+
+  # assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "obj")
+  expect_named(result$ops, c("vector", "matrix"))
+  # MAYBE TEST CONTENT HERE
+  expect_length(result$comments, 3L)
+})
+
+
+# DATA FRAME ==============
+
+test_that("data.frame", {
+  obj <- data.frame(a=1:12, b=letters[1:12])
+  expect(isTRUE(is.data.frame(obj)), "Test failed assumption")
+
+  # act
+  result <- how(obj)
+
+  # assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "obj")
+  expect_named(result$ops, c("scalar", "column(s) as list", "column(s) as atomic", "data frame"))
+  # MAYBE TEST CONTENT HERE
+  expect_length(result$comments, 1L)
+})
+
+
+
+# COMPLEX ================
+
+test_that("vector, complex", {
+  obj <- complex(real = c(3, 5, 7), imaginary = c(0,2,7))
+  expect(isTRUE(is.complex(obj)), "Test failed assumption")
+
+  # act
+  result <- how(obj)
+
+  # assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "obj")
+  expect_identical(result$ops, list(vector = c("[c(...)]", "[[...]]")))
+  expect_match(result$comments, ".*'Re.*'Im")
+})
