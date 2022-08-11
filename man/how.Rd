@@ -5,6 +5,7 @@
 \alias{how.default}
 \alias{how.list}
 \alias{how.array}
+\alias{how.matrix}
 \alias{how.data.frame}
 \alias{how.complex}
 \title{how}
@@ -16,6 +17,8 @@ how(x)
 \method{how}{list}(x)
 
 \method{how}{array}(x)
+
+\method{how}{matrix}(x)
 
 \method{how}{data.frame}(x)
 
@@ -37,6 +40,8 @@ Prints how an object can be subset
 \item \code{how(list)}: For lists
 
 \item \code{how(array)}: For arrays
+
+\item \code{how(matrix)}: For matrices
 
 \item \code{how(data.frame)}: For data frames
 

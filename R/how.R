@@ -1,12 +1,30 @@
 
-new_huh.how <- function(name, data, comments = NULL) {
-  structure(
-    c(
-      name = name, data, comments
+#' new_huh.how
+#'
+#' Factory to create `huh.how` objects (S3).
+#'
+#' @param .name Name of the object
+#' @param .ops A list describing available subscripting operators
+#' @param .comments Additional comments
+#'
+#' @return An `huh.how` object
+#' @keywords internal
+#' @noRd
+new_huh.how <- function(.name, .ops, .comments = NULL) {
+  if (missing(.name) || !is.character(.name))
+    stop("Subsetting specification needs an object name")
+  hasops <- !(missing(.ops) || is.null(.ops) || all(is.na(.ops)) || length(.ops) == 0)
+  if (hasops && !is.list(.ops)) .ops <- list(.ops)
+
+  result <- structure(
+    list(
+      name = .name,
+      ops = if (hasops) .ops else NULL,
+      comments = .comments
     ),
     class = "huh.how"
   )
-  return(data)
+  return(result)
 }
 
 #' how
@@ -28,7 +46,7 @@ how <- function(x) UseMethod("how")
 #' @export
 how.default <- function(x) {
   if (is.atomic(x)) {
-    result <- .how_atomic(x)
+    result <- .how_atomic(x, deparse(substitute(x)))
   } else {
     xclass <- attr(x, "class")
     if (!is.null(xclass)) {
@@ -36,22 +54,23 @@ how.default <- function(x) {
       double <- sapply(xclass, \(y) getS3method("[[", y, optional=TRUE))
       dollar <- sapply(xclass, \(y) getS3method("$", y, optional=TRUE))
 
+      ops <- list()
+      if (!is.null(single)) ops <- c(ops, c("[c(...)]"))
+      if (!is.null(double)) ops <- c(ops, c("[[...]]"))
+      if (!is.null(dollar)) ops <- c(ops, c("$..."))
+
       result <-
         new_huh.how(
-          name = deparse(substitute(x)),
-          list(
-            c("[c(...)]"),
-            c("[[...]]"),
-            c("$...")
-          ),
-          comments = "Return types cannot be determined"
+          .name = deparse(substitute(x)),
+          .ops = ops,
+          .comments = "Return types cannot be determined"
       )
     } else {
       result <-
         new_huh.how(
-          name = deparse(substitute(x)),
-          list(),
-          comments = "Object not subsettable"
+          .name = deparse(substitute(x)),
+          .ops = NULL,
+          .comments = "Object not subsettable"
         )
     }
   }
@@ -68,19 +87,19 @@ how.default <- function(x) {
 #' @return An object of class `huh.how`.
 #' @keywords internal
 #' @noRd
-.how_atomic <- function(x) {
+.how_atomic <- function(x, name) {
   hasattrs <- !is.null(attributes(x))
 
   if (hasattrs)
     result <- new_huh.how(
-      name = deparse(substitute(x)),
-      list(vector = c("[", "[[")),
-      comments = "Access meta data using the function 'attr()'"
+      .name = name,
+      .ops = list(vector = c("[c(...)]", "[[...]]")),
+      .comments = "Access meta data using the function 'attr()'"
     )
   else
     result <- new_huh.how(
-      name = deparse(substitute(x)),
-      list(vector = c("[", "[["))
+      .name = name,
+      .ops = list(vector = c("[c(...)]", "[[...]]"))
     )
   return(result)
 }
@@ -90,12 +109,12 @@ how.default <- function(x) {
 #' @export
 how.list <- function(x) {
   new_huh.how(
-    name = deparse(substitute(x)),
-    list(
+    .name = deparse(substitute(x)),
+    .ops = list(
       list = c("[c(...)]"),
       reduced = c("[[...]]", "$...")
     ),
-    comments = NULL
+    .comments = NULL
   )
 }
 
@@ -105,22 +124,36 @@ how.list <- function(x) {
 #' @export
 how.array <- function(x) {
   new_huh.how(
-    name = deparse(substitute(x)),
-    list(
+    .name = deparse(substitute(x)),
+    .ops = list(
       vector = c("[c(...)]", "[c(...), ..., ...]", "[[...]]"),
       matrix = c("[c(...), c(...), ...]"),
       array  = c("[c(...), c(...), c(...)]")
     ),
-    comments = c("Class will be reduced to leanest possible type. I.e. ...",
+    .comments = c("Class will be reduced to leanest possible type. I.e. ...",
       "* 1-dim results yield atomic vectors,",
       "* 2-dim results class 'matrix' AND 'array';",
       "* 3-dim results are arrays.")
   )
 }
 
-# how.matrix <- function(x) {
-#   NextMethod("how", x)
-# }
+
+#' @describeIn how For matrices
+#' @export
+how.matrix <- function(x) {
+  new_huh.how(
+    .name = deparse(substitute(x)),
+    .ops = list(
+      vector = c("[c(...)]", "[c(...), ...]", "[[...]]"),
+      matrix = c("[c(...), c(...)]")
+    ),
+    .comments = c("Class will be reduced to leanest possible type. I.e. ...",
+                  "* 1-dim results yield atomic vectors,",
+                  "* 2-dim results class 'matrix'")
+  )
+}
+
+
 
 #' @describeIn how For data frames
 #' @export
