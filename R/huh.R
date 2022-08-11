@@ -56,26 +56,3 @@ huh <- function(x) {
   return(y)
 }
 
-
-#' print.huh
-#'
-#' A formatted output of a `huh` object to the console.
-#'
-#' @param x A `huh` object
-#' @param ... Additional arguments passed on to `format()`.
-#'
-#' @return Returns `x` invisibly
-#' @export
-#'
-#' @examples
-#' print(huh(1:3))
-print.huh <- function(x, ...) {
-  .print <- function(x, nx) {
-    if (nx == "class") x <- paste(x, sep = ", ")
-    cat(format(nx, width=lwidth, ...), ": ", x, "\n", sep="")
-  }
-
-  lwidth <- max(nchar(names(x)))
-  mapply(.print, x, names(x))
-  return(invisible(x))
-}
