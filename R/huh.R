@@ -62,6 +62,7 @@ huh <- function(x) {
 #' A formatted output of a `huh` object to the console.
 #'
 #' @param x A `huh` object
+#' @param ... Additional arguments passed on to `format()`.
 #'
 #' @return Returns `x` invisibly
 #' @export

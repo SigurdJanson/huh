@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{A \code{huh} object}
+
+\item{...}{Additional arguments passed on to \code{format()}.}
 }
 \value{
 Returns \code{x} invisibly
