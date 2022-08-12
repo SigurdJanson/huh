@@ -94,7 +94,7 @@ how.default <- function(x) {
     result <- new_huh.how(
       .name = name,
       .ops = list(vector = c("[c(...)]", "[[...]]")),
-      .comments = "Access meta data using the function 'attr()'"
+      .comments = sprintf("Access meta data using the function 'attr(%s)'", name)
     )
   else
     result <- new_huh.how(
@@ -166,7 +166,7 @@ how.data.frame <- function(x) {
       `column(s) as atomic` = c("[[...]]", "[, ...]", "$..."),
       `data frame`= c("[c(...), c(...)]")
     ),
-    .comments = "2-dimensional subsetting returns a data frame"
+    .comments = "Any subset that covers more than 1 row returns a data frame"
   )
 }
 
@@ -174,10 +174,12 @@ how.data.frame <- function(x) {
 #' @describeIn how Complex numbers
 #' @export
 how.complex <- function(x) {
-  result <- .how_atomic(x, deparse(substitute(x)))
+  name <- deparse(substitute(x))
+  result <- .how_atomic(x, name)
 
   result$comments <- append(
-    result$comments, "Access the real and imaginary part using the functions 'Re()' and 'Im()'")
+    result$comments,
+    sprintf("Access the real and imaginary part using the functions 'Re(%s)' and 'Im(%s)'", name, name))
   return(result)
 }
 
