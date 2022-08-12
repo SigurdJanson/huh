@@ -186,24 +186,6 @@ how.complex <- function(x) {
 # TODO: Add factor ##################
 
 
-#' .formatprint
-#'
-#' @param labels Labels to print, one for each statement
-#' @param statements Statements documenting possible ways to subset the object
-#' @param ... Additional arguments passed on to `format()`.
-#'
-#' @return `invisible(NULL)`
-#' @keywords internal
-#' @noRd
-.formatprint <- function(labels, statements, ...) {
-  .print <- function(label, statement) {
-    cat(format(label, width=lwidth, ...), ": ", statement, "\n", sep="")
-  }
-  lwidth <- max(nchar(labels))
-  mapply(.print, labels, statements)
-
-  invisible(NULL)
-}
 
 
 

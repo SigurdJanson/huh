@@ -1,4 +1,33 @@
 
+#' .formatprint
+#'
+#' @param labels Labels to print, one for each statement
+#' @param statements Statements documenting possible ways to subset the object
+#' @param enum Specify how statements should be treated when they have more than
+#' one element. See details.
+#' @param ... Additional arguments passed on to `format()`.
+#' @details The argument `enum` changes the way each statement is printed when
+#' it contains several values. Normally a statement "class" is printed "matrix array.
+#' If you add a list element `class=", "` you specify a separator for the values and
+#' get an output like this: "matrix, array". `class="_"` would yield "matrix_array".
+#'
+#' @return `invisible(NULL)`
+#' @keywords internal
+#' @noRd
+.tableprint <- function(labels, statements, enum = NULL, ...) {
+  .print <- function(l, s) {
+    if (!is.null(enum) && l %in% names(enum))
+      s <- paste0(s, collapse = enum[[l]])
+    cat(format(l, width=lwidth, ...), ": ", s, "\n", sep="")
+  }
+  lwidth <- max(nchar(labels))
+  mapply(.print, labels, statements)
+
+  invisible(NULL)
+}
+
+
+
 #' print.huh
 #'
 #' A formatted output of a `huh` object to the console.
@@ -12,15 +41,10 @@
 #' @examples
 #' print(huh(1:3))
 print.huh <- function(x, ...) {
-  .print <- function(x, nx) {
-    if (nx == "class") x <- paste(x, sep = ", ")
-    cat(format(nx, width=lwidth, ...), ": ", x, "\n", sep="")
-  }
-
-  lwidth <- max(nchar(names(x)))
-  mapply(.print, x, names(x))
+  .tableprint(names(x), x, enum=list(class=", "))
   return(invisible(x))
 }
+
 
 
 #' print.huh.how
