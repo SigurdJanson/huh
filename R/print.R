@@ -1,5 +1,5 @@
 
-#' .formatprint
+#' .tableprint
 #'
 #' @param labels Labels to print, one for each statement
 #' @param statements Statements documenting possible ways to subset the object
