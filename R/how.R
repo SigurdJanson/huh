@@ -4,7 +4,7 @@
 #' Factory to create `huh.how` objects (S3).
 #'
 #' @param .name Name of the object
-#' @param .ops A list describing available subscripting operators
+#' @param .ops A list describing available subsetting operators
 #' @param .comments Additional comments
 #'
 #' @return An `huh.how` object
@@ -174,16 +174,26 @@ how.data.frame <- function(x) {
 #' @describeIn how Complex numbers
 #' @export
 how.complex <- function(x) {
-  result <- NextMethod("how", x)
+  result <- .how_atomic(x, deparse(substitute(x)))
 
-  result$name <- deparse(substitute(x))
   result$comments <- append(
     result$comments, "Access the real and imaginary part using the functions 'Re()' and 'Im()'")
   return(result)
 }
 
 
-# TODO: Add factor ##################
+
+#' @describeIn how Factors
+#' @export
+how.factor <- function(x) {
+  result <- .how_atomic(x, deparse(substitute(x)))
+
+  result$comments <- append(
+    sprintf("Access the levels using 'levels(%s)' or 'nlevels(%s)'", result$name, result$name),
+    result$comments)
+  return(result)
+}
+
 
 
 
