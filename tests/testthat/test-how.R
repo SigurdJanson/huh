@@ -130,3 +130,14 @@ test_that("vector, complex", {
   expect_identical(result$ops, list(vector = c("[c(...)]", "[[...]]")))
   expect_match(result$comments, ".*'Re.*'Im")
 })
+
+
+# NOT SUBSETTABLE =========
+test_that("Not subsettable", {
+  expect_match(
+    how(mean)$comments, "Object not subsettable",
+  )
+  expect_match(
+    how(call("u"))$comments, "Object not subsettable",
+  )
+})

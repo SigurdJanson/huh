@@ -197,7 +197,16 @@ how.factor <- function(x) {
 }
 
 
-
+how.expression <- function(x) {
+  new_huh.how(
+    .name = deparse(substitute(x)),
+    .ops = list(
+      expression = c("[c(...)]"),
+      `mixed types` = c("[[...]]")
+    ),
+    .comments = NULL
+  )
+}
 
 
 
