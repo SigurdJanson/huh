@@ -1,4 +1,4 @@
-2022-08-09
+2022-08-14
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -60,8 +60,3 @@ devtools::install_github("SigurdJanson/huh")
 ```
 
 <!-- `huh` distinguishes different OOP paradigms with the field `paradigm`. -->
-
-## Sources
-
-<http://adv-r.had.co.nz/OO-essentials.html>
-<https://adv-r.hadley.nz/oo.html>

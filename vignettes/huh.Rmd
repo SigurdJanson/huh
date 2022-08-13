@@ -14,25 +14,84 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, include=FALSE}
 library(huh)
 ```
 
+
+
+Learning R can be hard. The language has grown and developed over several generations and it is carried by a community which is very much alive. The R core team holds everything together with a certain conservative attitude. R objects can be confusing for a newbie. Not only is there large variety of objects (that is quite normal for modern programming languages). The underlying paradigms vary. Though they may look similar the difference can make their handling quite difficult. 
+
+The "huh?" package wants to describe objects to make it easier to understand what they contain and how to handle them.
+
+
+
+
 # Data Objects
+
+
 
 ## Subsetting
 
+`how()` identifies ways to subset an object.
+
+It returns an S3 object with the class `huh.how`. It is basically a list of operators nested by return type of the subset operation. An example:
+
+```{r typeof example}
+ll <- list(1:3, letters[1:3], c(TRUE, FALSE, TRUE))
+typeof(ll[1]) # returns "list"
+typeof(ll[[1]]) # returns "integer"
+```
+
+Hence, these operators will be grouped in separate sub-structures of the list.
+
+```{r}
+ structure(
+   list(
+     vector = c("[c(...)]"),
+     list   = c("[[...]]", "$...")
+   ), class="huh.how"
+ )
+```
 
 
-# Function Objects
+
+# Functions
+
 
 
 # Special Issues
 
-## How to get an exhaustive list of internal S3 generics?
+## How to identify a generic S3 function?
 
-The `tools` package provides `.get_internal_S3_generics()`. This function does not seem to be safe. Many generics are hard-coded. But how can this be solved? 
+The clearest way is to find a call to `UseMethod()` in the body of the function. That is how `utils::isS3stdGeneric()` and `roxygen2::is_s3_generic()` do it. But that does not help with internal generics which are implemented in C. The only way to handle those is to get an exhaustive list of internal S3 generics. But how can one do that?
 
-1. `tools:::.get_internal_S3_generics` calls `tools:::.get_S3_primitive_generics()`. This function combines `base::.S3PrimitiveGenerics` with another list of hard-coded names. However, these hard-coded function names are **all included** in `names(.GenericArgsEnv)`. According to [R Internals: "Prototypes for primitives"](https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Prototypes-for-primitives) `names(.GenericArgsEnv)` is an environment in the base package for those primitives which are internal S3 generics. And indeed, it provides all function names that `tools:::.get_S3_primitive_generics()` also gives and more (i.e. `log2` and `log10`). Hence, this part of the tools function can be replaced.
+The `tools` package provides `.get_internal_S3_generics()`. This function does not seem to be safe. This function uses `.S3PrimitiveGenerics`. Because this list is incomplete it adds several names that are hard-coded in the function. That does not feel reliable.
 
-2. That leaves the hard-coded function names in `tools:::.get_internal_S3_generics`. 
+There is another function that collects all internal generics in the package `R.methodsS3`. The local function `knownInternalGenericS3()` combines `names(.knownS3Generics)` and `.S3PrimitiveGenerics`. It further adds `tools::.get_internal_S3_generics()` if the package is available. At least this way we avoid a hard dependency. And, finally, the functions `cbind` and `rbind` are added.
+
+After checking these functions and hours of research there may be a better way.  According to [R Internals: "Prototypes for primitives"](https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Prototypes-for-primitives) `names(.GenericArgsEnv)` is an environment in the base package for those primitives which are internal S3 generics. And indeed, it provides lots of function names. 
+
+The situation is rather confusing. Several different collections of internal generics but none of them seems complete. After comparing these lists:
+
+* `cbind` and `rbind` would be already included  a union of `names(.knownS3Generics)` and `names(.GenericArgsEnv)`.
+* So are the elements of `.S3PrimitiveGenerics`.
+
+The cleanest way to get a list of 
+
+1. Create a union of `names(.knownS3Generics)` and `names(.GenericArgsEnv)`.
+2. Check if the `tools` package and it's function `.get_internal_S3_generics()` are available. If so, add it's result.
+
+
+
+## Sources
+
+R Core Team (2022). _[R: A language and environment for statistical computing](https://www.R-project.org/)_. R Foundation for Statistical Computing, Vienna, Austria.
+  
+R core team (2022). _[R Internals: "Prototypes for primitives"](https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Prototypes-for-primitives)_. created for R, version 4.2.1, 2022-06-23.
+
+Wickham, H. (). _[Advanced R](http://adv-r.had.co.nz/OO-essentials.html)_. 1st edition.
+
+Wickham, H. (2021). _[Advanced R](https://adv-r.hadley.nz/oo.html)_. 2nd edition. Chapman & Hall.
+
+Wickham H, Danenberg P, Csárdi G, Eugster M (2022). _[roxygen2: In-Line Documentation for R](https://CRAN.R-project.org/package=roxygen2)_. R package version 7.2.1.
