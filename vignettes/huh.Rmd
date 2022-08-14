@@ -30,7 +30,7 @@ The "huh?" package wants to describe objects to make it easier to understand wha
 
 # Data Objects
 
-
+... (TBD)
 
 ## Subsetting
 
@@ -87,7 +87,7 @@ The idea of `how` is that you do not need to check the documentation if you are 
 
 The different subsetting techniques differ a lot when it comes to performance. Here is a demonstration for data frames:
 
-```{r performance of subsetting}
+```{r performance of subsetting, echo=FALSE}
 bench::mark(time_unit="us",
   # 5 ways by Wickham (2017)
   mtcars[32, 11],
@@ -100,7 +100,7 @@ bench::mark(time_unit="us",
   mtcars[["carb"]][32],
   .subset2(mtcars, 11)[[32]],
   .subset2(mtcars, "carb")[32]
-)
+)[1:4]
 ```
 
 The fastest is `.subset2()` with numeric indices. However, the manual recommends not to use it. And unless you are doing something extremely performance-hungry job, this may be wise. `.subset2` makes code harder to read and it is less reliable and do not allow missing arguments. `.subset2(mtcars, integer())` throws an error while `mtcars[integer()]` returns a data frame with 0 columns and 32 rows.
@@ -116,6 +116,7 @@ In a normal setting these may be suitable guidelines:
 
 # Functions
 
+... (TBD)
 
 
 # Special Issues
@@ -141,12 +142,30 @@ The cleanest way to get a list of
 2. Check if the `tools` package and it's function `.get_internal_S3_generics()` are available. If so, add it's result.
 
 
+## How to identify an S3 method?
 
-## Sources
+... (TBD)
+
+
+
+## R Objects
+
+Notes: 
+
+* `S3` classes are marked.
+* Obvious attributes are omitted, like a `class` attribute of an S3 class.
+* For obvious reasons, derived objects share the attributes and data structure with their parents and are not repeated.
+
+
+![Object hierarchy in R](img/classtree.png)
+
+
+
+# Sources
 
 R Core Team (2022). _[R: A language and environment for statistical computing](https://www.R-project.org/)_. R Foundation for Statistical Computing, Vienna, Austria.
   
-R core team (2022). _[R Internals: "Prototypes for primitives"](https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Prototypes-for-primitives)_. created for R, version 4.2.1, 2022-06-23.
+R core team (2022). _[R Internals](https://cran.r-project.org/doc/manuals/r-release/R-ints.html)_. created for R, version 4.2.1, 2022-06-23.
 
 Wickham, H. (2017). _[Advanced R](http://adv-r.had.co.nz/OO-essentials.html)_. 1st edition.
 
