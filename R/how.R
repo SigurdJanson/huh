@@ -130,10 +130,11 @@ how.array <- function(x) {
       matrix = c("[c(...), c(...), ...]"),
       array  = c("[c(...), c(...), c(...)]")
     ),
-    .comments = c("Class will be reduced to leanest possible type. I.e. ...",
-      "* 1-dim results yield atomic vectors,",
-      "* 2-dim results class 'matrix' AND 'array';",
-      "* 3-dim results are arrays.")
+    .comments = c("The result is coerced to the lowest possible dimension. I.e. ...",
+      "* 1-dim results are atomic vectors,",
+      "* 2-dim results are 'matrix' AND 'array',",
+      "* 3-dim results are arrays.",
+      "Add the argument `drop=FALSE` to keep the class")
   )
 }
 
@@ -147,9 +148,10 @@ how.matrix <- function(x) {
       vector = c("[c(...)]", "[c(...), ...]", "[[...]]"),
       matrix = c("[c(...), c(...)]")
     ),
-    .comments = c("Class will be reduced to leanest possible type. I.e. ...",
+    .comments = c("The result is coerced to the lowest possible dimension. I.e. ...",
                   "* 1-dim results yield atomic vectors,",
-                  "* 2-dim results class 'matrix'")
+                  "* 2-dim results class 'matrix'",
+                  "Add the argument `drop=FALSE` to keep the class")
   )
 }
 
@@ -207,6 +209,8 @@ how.expression <- function(x) {
     .comments = NULL
   )
 }
+
+
 
 
 
