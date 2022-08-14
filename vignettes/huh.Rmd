@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+Sys.setenv(lang = "en_US")
 ```
 
 ```{r setup, include=FALSE}
@@ -33,9 +34,27 @@ The "huh?" package wants to describe objects to make it easier to understand wha
 
 ## Subsetting
 
-`how()` identifies ways to subset an object.
+`how()` identifies ways to subset an object. That can be difficult at the beginning when you learn R. Wickham (2017) shows five different ways to extract a single value from a data frame. And you can easily recombine these five solutions to create even more.
 
-It returns an S3 object with the class `huh.how`. It is basically a list of operators nested by return type of the subset operation. An example:
+```{r 5 ways}
+# 5 subsetting ways by Wickham (2017)
+mtcars[32, 11]
+mtcars$carb[32]
+mtcars[[c(11, 32)]]
+mtcars[[11]][32]
+.subset2(mtcars, 11)[32]
+```
+
+Five different ways? As you can see, the order of the numbers is **not even consistent**. The fastest solution outperforms the slowest by a factor of 30 in a simple example (i.e. the `mtcars` data set, see below). Yes, it can make quite a difference which way you choose.
+
+How you are trying to access elements also determines the object type you get in return. A common mistake is this:
+
+```{r, error=TRUE}
+listofnumbers <- as.list(1:4)
+listofnumbers[2] + listofnumbers[3]
+```
+
+when it should be `listofnumbers[[2]] + listofnumbers[[3]]`. Of course:
 
 ```{r typeof example}
 ll <- list(1:3, letters[1:3], c(TRUE, FALSE, TRUE))
@@ -43,16 +62,55 @@ typeof(ll[1]) # returns "list"
 typeof(ll[[1]]) # returns "integer"
 ```
 
-Hence, these operators will be grouped in separate sub-structures of the list.
 
-```{r}
- structure(
-   list(
-     vector = c("[c(...)]"),
-     list   = c("[[...]]", "$...")
-   ), class="huh.how"
- )
+Subsetting in R is powerful. But (in programming) power often means complexity. This is how the idea of `how()` came up: simply type `how(myobject)` and the console will print the **alternatives to subset** this and what **return types** you can expect. If this saves beginners from opening the manual just in 1 out of 2 cases, the huh-package is a big success, because it'll save you an incredible amount of time.
+
+
+It returns an S3 object with the class `huh.how`. It is basically a list of operators nested by return type of the subset operation. An example:
+
+
+The idea of `how` is that you do not need to check the documentation if you are unsure about subsetting. Just type `how(evilobject)` and you get the basic information in the console.
+
+
+<!-- Hence, these operators will be grouped in separate sub-structures of the list. -->
+
+<!-- ```{r eval=FALSE, include=FALSE} -->
+<!--  structure( -->
+<!--    list( -->
+<!--      vector = c("[c(...)]"), -->
+<!--      list   = c("[[...]]", "$...") -->
+<!--    ), class="huh.how" -->
+<!--  ) -->
+<!-- ``` -->
+
+## Choosing a subsetting technique?
+
+The different subsetting techniques differ a lot when it comes to performance. Here is a demonstration for data frames:
+
+```{r performance of subsetting}
+bench::mark(time_unit="us",
+  # 5 ways by Wickham (2017)
+  mtcars[32, 11],
+  mtcars$carb[32],
+  mtcars[[c(11, 32)]],
+  mtcars[[11]][32],
+  .subset2(mtcars, 11)[32],
+  # Further combinations
+  mtcars[[11]][[32]],
+  mtcars[["carb"]][32],
+  .subset2(mtcars, 11)[[32]],
+  .subset2(mtcars, "carb")[32]
+)
 ```
+
+The fastest is `.subset2()` with numeric indices. However, the manual recommends not to use it. And unless you are doing something extremely performance-hungry job, this may be wise. `.subset2` makes code harder to read and it is less reliable and do not allow missing arguments. `.subset2(mtcars, integer())` throws an error while `mtcars[integer()]` returns a data frame with 0 columns and 32 rows.
+
+In a normal setting these may be suitable guidelines:
+
+* Do not underestimate the simple `mtcars[32, 11]`. It has the most intuitive readability (IMHO) and provides the highest flexibility. Personally, without additional requirements this is always my first choice; especially when I do not write code only for myself.
+* If you want more speed the pattern `mtcars$carb[c(...)]` is your friend. The disadvantage is that you cannot use variables or numeric indices with `$`. Another disadvantage is that you can only pick one column at a time.
+* If you need to pick values using variables `mtcars[[11]][32]` is still quite fast. Again, you can only pick a single column with this.
+  
 
 
 
@@ -90,7 +148,7 @@ R Core Team (2022). _[R: A language and environment for statistical computing](h
   
 R core team (2022). _[R Internals: "Prototypes for primitives"](https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Prototypes-for-primitives)_. created for R, version 4.2.1, 2022-06-23.
 
-Wickham, H. (). _[Advanced R](http://adv-r.had.co.nz/OO-essentials.html)_. 1st edition.
+Wickham, H. (2017). _[Advanced R](http://adv-r.had.co.nz/OO-essentials.html)_. 1st edition.
 
 Wickham, H. (2021). _[Advanced R](https://adv-r.hadley.nz/oo.html)_. 2nd edition. Chapman & Hall.
 
