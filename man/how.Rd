@@ -9,6 +9,7 @@
 \alias{how.data.frame}
 \alias{how.complex}
 \alias{how.factor}
+\alias{how.expression}
 \title{how}
 \usage{
 how(x)
@@ -26,6 +27,8 @@ how(x)
 \method{how}{complex}(x)
 
 \method{how}{factor}(x)
+
+\method{how}{expression}(x)
 }
 \arguments{
 \item{x}{An object}
@@ -51,6 +54,8 @@ Prints how an object can be subset
 \item \code{how(complex)}: Complex numbers
 
 \item \code{how(factor)}: Factors
+
+\item \code{how(expression)}: Expressions
 
 }}
 \examples{

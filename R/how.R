@@ -199,6 +199,8 @@ how.factor <- function(x) {
 }
 
 
+#' @describeIn how Expressions
+#' @export
 how.expression <- function(x) {
   new_huh.how(
     .name = deparse(substitute(x)),
@@ -210,6 +212,16 @@ how.expression <- function(x) {
   )
 }
 
+
+how.environment <- function(x) {
+  new_huh.how(
+    .name = deparse(substitute(x)),
+    .ops = list(
+      `mixed types` = c("[[...]]", "$...")
+    ),
+    .comments = c("Only character indices are allowed and no partial matching is done.")
+  )
+}
 
 
 
