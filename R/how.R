@@ -213,6 +213,8 @@ how.expression <- function(x) {
 }
 
 
+#' @describeIn how Environments
+#' @export
 how.environment <- function(x) {
   new_huh.how(
     .name = deparse(substitute(x)),
@@ -224,6 +226,17 @@ how.environment <- function(x) {
 }
 
 
+#' @describeIn how Quosures (see [rlang::quosure-tools])
+#' @export
+how.quosure <- function(x) {
+  new_huh.how(
+    .name = deparse(substitute(x)),
+    .ops = list(
+      NULL
+    ),
+    .comments = c("Subsetting quosures has been deprecated.")
+  )
+}
 
 
 # print_handling.2d.atomic <- function(x, oname) {

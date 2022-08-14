@@ -10,6 +10,8 @@
 \alias{how.complex}
 \alias{how.factor}
 \alias{how.expression}
+\alias{how.environment}
+\alias{how.quosure}
 \title{how}
 \usage{
 how(x)
@@ -29,6 +31,10 @@ how(x)
 \method{how}{factor}(x)
 
 \method{how}{expression}(x)
+
+\method{how}{environment}(x)
+
+\method{how}{quosure}(x)
 }
 \arguments{
 \item{x}{An object}
@@ -56,6 +62,10 @@ Prints how an object can be subset
 \item \code{how(factor)}: Factors
 
 \item \code{how(expression)}: Expressions
+
+\item \code{how(environment)}: Environments
+
+\item \code{how(quosure)}: Quosures (see \link[rlang:quosure-tools]{rlang::quosure-tools})
 
 }}
 \examples{
