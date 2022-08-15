@@ -1,5 +1,29 @@
 
 
+#' .knownMethodsS3
+#'
+#' @param nsName A string identifying a namespace
+#'
+#' @return A list of names known to be S3 methods in the given
+#' namespace.
+#'
+#' @keywords internal
+.knownMethodsS3 <- function(nsName = NULL) {
+  if (is.null(nsName) || nsName == "base") {
+    return(
+      asNamespace("base", base.OK = TRUE)[[".__S3MethodsTable__."]] |>
+        as.list() |>
+        names()
+    )
+  } else {
+    if (!is.character(nsName)) stop("Namespace name is not a character string")
+    ns <- asNamespace(nsName, base.OK = FALSE)
+    return(get("S3methods", envir = ns[[".__NAMESPACE__."]])[, 3L])
+  }
+}
+
+
+
 #' .knownInternalGenericS3
 #'
 #' Provide a list with internal generics.
@@ -46,7 +70,7 @@
 #'
 #' @note Be careful how you use this. A call to `UseMethod` in a local function
 #' does not produce a dispatch on it's outer function.
-#'
+#' @return TRUE/FALSE
 #' @keywords internal
 #' @noRd
 #' @references Taken from [roxygen2](https://github.com/r-lib/roxygen2/) and optimised.
@@ -72,15 +96,19 @@
 #'
 #' @param name Function or name of function.
 #' @param env Base environment in which to look for function definition.
-#'
+#' @return TRUE/FALSE
 #' @details
+#' If the argument `name` is a function it will try to determine it's name with
+#' `deparse(substitute(name))`. If a function has been passed on through several functions
+#' The original name may not be determined anymore.
+#'
 #' `.isS3Generic` looks at the function body to see if it
 #' calls [UseMethod()]. If not, it compares the function name to
 #' `.knownInternalGenericS3()` to make sure it also recognises internal or primitive
 #' generics
 #'
 #' @keywords internal
-#' @references Taken from [roxygen2](https://github.com/r-lib/roxygen2/) and optimised.
+#' @references Adapted from [roxygen2](https://github.com/r-lib/roxygen2/) and optimised.
 #' @noRd
 .isS3Generic <- function(name, env = parent.frame()) {
   if (missing(name)) stop("Missing function namey. Nothing to do.")
@@ -105,32 +133,65 @@
 
 
 
-#' #' Determine function type.
-#' #'
-#' #' This function figures out whether the input function is a
-#' #' regular/primitive/internal function, a internal/S3/S4 generic, or a
-#' #' S3/S4/RC method.
-#' #'
-#' #' @note This is function is slightly simplified as it's possible
-#' #' for a method from one class to be a generic for another class, but that
-#' #' seems like such a bad idea that hopefully no one has done it.
-#' #' @note This function has been taken from `[roxygen2](https://github.com/r-lib/roxygen2/)::`
-#' #' `ftype` and optimised (by reducing dependencies and instantiating objects only when needed).
-#' #' Unlike the version from roxygen2 this function does not dinstinguish internal and primitive
-#' #' generics as I do not see what value that has for users (except may curiosity).
-#' #'
-#' #' @param f unquoted function name
-#' #' @return a character of vector of length 1 or 2.
-#' #' @details -
-#' #' @importFrom methods is
-#' #' @_importFrom rlang enexpr
-#' #' @examples
-#' #' ftype(`%in%`)
-#' #' ftype(sum)
-#' #' ftype(t.data.frame)
-#' #' ftype(t.test) # Tricky!
-#' #' ftype(writeLines)
-#' #' ftype(unlist)
+
+
+#' .isS3Method
+#'
+#' @param name Function or name of function.
+#' @param env Base environment in which to look for function definition.
+#'
+#' @return TRUE/FALSE
+#'
+#' @keywords internal
+.isS3Method <- function(name, env = parent.frame()) {
+  if (missing(name)) stop("Missing function namey. Nothing to do.")
+  if (name == "") return(FALSE)
+
+  if (is.character(name)) {
+    f <- get(name, envir = env)
+  } else {
+    f <- name
+    name <- deparse(substitute(f))
+  }
+
+  if (identical(env, globalenv())) {
+    knowns <- .knownMethodsS3()
+    return(name %in% knowns)
+  } else {
+
+    nsName <- getNamespaceInfo(asNamespace(ns), "spec")[["name"]]
+  }
+}
+
+
+
+
+#' Determine function type.
+#'
+#' This function figures out whether the input function is a
+#' regular/primitive/internal function, a internal/S3/S4 generic, or a
+#' S3/S4/RC method.
+#'
+#' @note This is function is slightly simplified as it's possible
+#' for a method from one class to be a generic for another class, but that
+#' seems like such a bad idea that hopefully no one has done it.
+#' @note This function has been taken from `[roxygen2](https://github.com/r-lib/roxygen2/)::`
+#' `ftype` and optimised (by reducing dependencies and instantiating objects only when needed).
+#' Unlike the version from roxygen2 this function does not distinguish internal and primitive
+#' generics as I do not see what value that has for users (except may curiosity).
+#'
+#' @param f unquoted function name
+#' @return a character of vector of length 1 or 2.
+#' @details -
+#' @importFrom methods is
+#' @importFrom rlang enexpr
+#' @examples
+#' ftype(`%in%`)
+#' ftype(sum)
+#' ftype(t.data.frame)
+#' ftype(t.test) # Tricky!
+#' ftype(writeLines)
+#' ftype(unlist)
 ftype <- function(f) {
   if (!is.function(f)) ##original: (!is.function(f) && !is.function(f))
     stop("`f` is not a function")
@@ -168,7 +229,7 @@ ftype <- function(f) {
     } else {
       fname <- deparse(substitute(f))
       gen <- .isS3Generic(fname, env)
-      mth <- is_s3_method(fname, env)
+      mth <- .isS3Method(fname, env)
     }
 
     if (gen || mth)
