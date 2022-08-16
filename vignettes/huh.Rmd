@@ -166,17 +166,21 @@ Notes:
 
 Bengtsson, H. [The R.oo package - Object-Oriented Programming with References Using Standard R Code](https://www.r-project.org/conferences/DSC-2003/Proceedings/Bengtsson.pdf), Proceedings of the 3rd International Workshop on Distributed Statistical Computing (DSC 2003), ISSN 1609-395X, Hornik, K.; Leisch, F. & Zeileis, A. (ed.), 2003. ([`R.methodsS3` package code](https://github.com/cran/R.methodsS3/blob/master/R))
 
+Gupta, Suraj (2012). _[How R Searches and Finds Stuff](https://blog.thatbuthow.com/how-r-searches-and-finds-stuff/)_. accessed 2022-08-16
+
 R Core Team (2022). _[R: A language and environment for statistical computing](https://www.R-project.org/)_. R Foundation for Statistical Computing, Vienna, Austria.
 * Package [tools](https://github.com/wch/r-source/tree/79298c499218846d14500255efd622b5021c10ec/src/library/tools)
 * Package [utils]()
-  
+
 R core team (2022). _[R Internals](https://cran.r-project.org/doc/manuals/r-release/R-ints.html)_. created for R, version 4.2.1, 2022-06-23.
 
-Wickham, H. (2017). _[Advanced R](http://adv-r.had.co.nz/OO-essentials.html)_. 1st edition.
+R core team (2022). _[R Language Definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html)_. created for R, version 4.2.1, 2022-06-23.
 
-Hadley Wickham (2019). [sloop: Helpers for 'OOP' in R](https://CRAN.R-project.org/package=sloop). R package version 1.0.1. 
+Wickham, Hadley (2017). _[Advanced R](http://adv-r.had.co.nz/OO-essentials.html)_. 1st edition.
 
-Wickham, H. (2021). _[Advanced R](https://adv-r.hadley.nz/oo.html)_. 2nd edition. Chapman & Hall.
+Wickham, Hadley (2019). [sloop: Helpers for 'OOP' in R](https://CRAN.R-project.org/package=sloop). R package version 1.0.1. 
 
-Wickham H, Danenberg P, Csárdi G, Eugster M (2022). _[roxygen2: In-Line Documentation for R](https://CRAN.R-project.org/package=roxygen2)_. R package version 7.2.1.
+Wickham, Hadley (2021). _[Advanced R](https://adv-r.hadley.nz/oo.html)_. 2nd edition. Chapman & Hall.
+
+Wickham H., Danenberg P., Csárdi G., Eugster M. (2022). _[roxygen2: In-Line Documentation for R](https://CRAN.R-project.org/package=roxygen2)_. R package version 7.2.1.
 
