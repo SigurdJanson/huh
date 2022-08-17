@@ -64,7 +64,7 @@ how.default <- function(x) {
           .name = deparse(substitute(x)),
           .ops = ops,
           .comments = "Return types cannot be determined"
-      )
+        )
     } else {
       result <-
         new_huh.how(
@@ -131,10 +131,10 @@ how.array <- function(x) {
       array  = c("[c(...), c(...), c(...)]")
     ),
     .comments = c("The result is coerced to the lowest possible dimension. I.e. ...",
-      "* 1-dim results are atomic vectors,",
-      "* 2-dim results are 'matrix' AND 'array',",
-      "* 3-dim results are arrays.",
-      "Add the argument `drop=FALSE` to keep the class")
+                  "* 1-dim results are atomic vectors,",
+                  "* 2-dim results are 'matrix' AND 'array',",
+                  "* 3-dim results are arrays.",
+                  "Add the argument `drop=FALSE` to keep the class")
   )
 }
 

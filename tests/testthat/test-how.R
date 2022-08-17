@@ -70,7 +70,7 @@ test_that("array", {
   expect_identical(result$name, "obj")
   expect_named(result$ops, c("vector", "matrix", "array"))
   # MAYBE TEST CONTENT HERE
-  expect_length(result$comments, 4L)
+  expect_length(result$comments, 5L)
 })
 
 
@@ -90,7 +90,7 @@ test_that("matrix", {
   expect_identical(result$name, "obj")
   expect_named(result$ops, c("vector", "matrix"))
   # MAYBE TEST CONTENT HERE
-  expect_length(result$comments, 3L)
+  expect_length(result$comments, 4L)
 })
 
 
