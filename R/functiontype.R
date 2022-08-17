@@ -112,7 +112,7 @@
 #' @references Adapted from [roxygen2](https://github.com/r-lib/roxygen2/) and optimised.
 #' @noRd
 .isS3Generic <- function(name, env = parent.frame()) {
-  if (missing(name)) stop("Missing function namey. Nothing to do.")
+  if (missing(name)) stop("Missing function name. Nothing to do.")
   if (name == "") return(FALSE)
 
   if (is.character(name)) {
@@ -131,7 +131,6 @@
 
   return(name %in% .knownInternalGenericS3())
 }
-
 
 
 
@@ -196,14 +195,14 @@
 #' @note This is function is slightly simplified as it's possible
 #' for a method from one class to be a generic for another class, but that
 #' seems like such a bad idea that hopefully no one has done it.
-#' @note This function has been taken from `[roxygen2](https://github.com/r-lib/roxygen2/)::`
+#' @note This function has been taken from `[sloop](https://github.com/r-lib/sloop)::`
 #' `ftype` and optimised (by reducing dependencies and instantiating objects only when needed).
 #' Unlike the version from roxygen2 this function does not distinguish internal and primitive
 #' generics as I do not see what value that has for users (except may curiosity).
 #'
 #' @param f unquoted function name
 #' @return a character of vector of length 1 or 2.
-#' @details -
+#' @export
 #' @examples
 #' ftype(`%in%`)
 #' ftype(sum)
@@ -218,6 +217,7 @@ ftype <- function(f) {
 
   src <- ""
   branch <- ""
+  fname <- deparse(substitute(f))
 
   ##original:
   ## here we do not distinguish between "internal generics" and "primitive generics"
@@ -227,7 +227,7 @@ ftype <- function(f) {
   #   c("internal", if (is_internal_generic(internal_name(f))) "generic")
   if (is.primitive(f)) {
     src <- "primitive"
-    if (f %in% names(.GenericArgsEnv)) #TODO: further optimise this check
+    if (fname %in% .knownInternalGenericS3()) #TODO: further optimise this check
       branch <- "generic"
     else
       branch <- ""
@@ -241,14 +241,13 @@ ftype <- function(f) {
 
     #fexpr <- rlang::enexpr(f) # TODO: find a way to eliminate rlang::enexpr
     fexpr <- substitute(f)
-    env <- parent.frame(2) ##original: rlang::caller_env(n=1) parent.frame(n + 1)
+    env <- parent.frame(1) ##original: rlang::caller_env(n=1) parent.frame(n + 1)
 
     if (typeof(fexpr) != "symbol") { ##original: if (!is_symbol(fexpr))
       warning("Determination of S3 status requires function name", call. = FALSE)
       gen <- FALSE
       mth <- FALSE
     } else {
-      fname <- deparse(substitute(f))
       gen <- .isS3Generic(fname, env)
       mth <- .isS3Method(fname, env)
     }

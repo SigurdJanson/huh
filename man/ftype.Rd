@@ -17,17 +17,12 @@ This function figures out whether the input function is a
 regular/primitive/internal function, a internal/S3/S4 generic, or a
 S3/S4/RC method.
 }
-\details{
-\itemize{
-\item 
-}
-}
 \note{
 This is function is slightly simplified as it's possible
 for a method from one class to be a generic for another class, but that
 seems like such a bad idea that hopefully no one has done it.
 
-This function has been taken from \verb{[roxygen2](https://github.com/r-lib/roxygen2/)::}
+This function has been taken from \verb{[sloop](https://github.com/r-lib/sloop)::}
 \code{ftype} and optimised (by reducing dependencies and instantiating objects only when needed).
 Unlike the version from roxygen2 this function does not distinguish internal and primitive
 generics as I do not see what value that has for users (except may curiosity).
