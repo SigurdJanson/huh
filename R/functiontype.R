@@ -8,6 +8,7 @@
 #' namespace.
 #'
 #' @keywords internal
+#' @noRd
 .knownMethodsS3 <- function(nsName = NULL) {
   if (is.null(nsName) || nsName == "base") {
     return(
@@ -135,34 +136,54 @@
 
 
 
+# .isS3Method <- function(name, env = parent.frame()) {
+#   if (missing(name)) stop("Missing function name. Nothing to do.")
+#   if (name == "") return(FALSE)
+#
+#   if (is.character(name)) {
+#     f <- get(name, envir = env)
+#   } else {
+#     f <- name
+#     name <- deparse(substitute(f))
+#   }
+#
+#   # Search in the last environment of the search path first
+#   # (assumption: we get most hits there)
+#   knowns <- .knownMethodsS3()
+#   if (name %in% knowns)
+#     return(TRUE)
+#   else {
+#     if (identical(env, globalenv())) return(FALSE)
+#
+#     # Search through the search path
+#
+#     # TODO: continue
+#     ns <- asNamespace(environmentName(env), base.OK = TRUE)
+#     nsName <- getNamespaceInfo(ns, "spec")[["name"]]
+#     knowns <- .knownMethodsS3(nsName)
+#   }
+#
+#   return()
+# }
+
+
+
 #' .isS3Method
+#'
+#' Checks if `method` is the name of a valid / registered S3 method.
 #'
 #' @param name Function or name of function.
 #' @param env Base environment in which to look for function definition.
 #'
 #' @return TRUE/FALSE
 #'
+#' @importFrom utils isS3method
 #' @keywords internal
-.isS3Method <- function(name, env = parent.frame()) {
-  if (missing(name)) stop("Missing function namey. Nothing to do.")
-  if (name == "") return(FALSE)
-
-  if (is.character(name)) {
-    f <- get(name, envir = env)
-  } else {
-    f <- name
-    name <- deparse(substitute(f))
-  }
-
-  if (identical(env, globalenv())) {
-    knowns <- .knownMethodsS3()
-    return(name %in% knowns)
-  } else {
-
-    nsName <- getNamespaceInfo(asNamespace(ns), "spec")[["name"]]
-  }
+.isS3Method <- function(method, env = parent.frame())
+{
+  # Use `utils` until - maybe - someday we'll find something better
+  utils::isS3method(method, envir = env)
 }
-
 
 
 
@@ -183,8 +204,6 @@
 #' @param f unquoted function name
 #' @return a character of vector of length 1 or 2.
 #' @details -
-#' @importFrom methods is
-#' @importFrom rlang enexpr
 #' @examples
 #' ftype(`%in%`)
 #' ftype(sum)
@@ -192,6 +211,7 @@
 #' ftype(t.test) # Tricky!
 #' ftype(writeLines)
 #' ftype(unlist)
+######## @importFrom rlang enexpr
 ftype <- function(f) {
   if (!is.function(f)) ##original: (!is.function(f) && !is.function(f))
     stop("`f` is not a function")
@@ -211,18 +231,19 @@ ftype <- function(f) {
       branch <- "generic"
     else
       branch <- ""
-  } else if (methods::is(f, "standardGeneric")) {
+  } else if (inherits(f, "standardGeneric")) {
     src <- "S4"; branch <- "generic"
-  } else if (methods::is(f, "MethodDefinition")) {
+  } else if (inherits(f, "MethodDefinition")) {
     src <- "S4"; branch <- "method"
-  } else if (methods::is(f, "refMethodDef")) {
+  } else if (inherits(f, "refMethodDef")) {
     src <- "RC"; branch <- "method"
   } else {
 
-    fexpr <- rlang::enexpr(f) # TODO: find a way to eliminate rlang::enexpr
+    #fexpr <- rlang::enexpr(f) # TODO: find a way to eliminate rlang::enexpr
+    fexpr <- substitute(f)
     env <- parent.frame(2) ##original: rlang::caller_env(n=1) parent.frame(n + 1)
 
-    if (!is_symbol(fexpr)) {
+    if (typeof(fexpr) != "symbol") { ##original: if (!is_symbol(fexpr))
       warning("Determination of S3 status requires function name", call. = FALSE)
       gen <- FALSE
       mth <- FALSE
@@ -241,22 +262,4 @@ ftype <- function(f) {
   } #else
 
   return(c(src, branch))
-
-  # } else {
-  #   if (!is_symbol(fexpr)) {
-  #     warning("Determination of S3 status requires function name", call. = FALSE)
-  #     gen <- FALSE
-  #     mth <- FALSE
-  #   } else {
-  #     fname <- as.character(fexpr)
-  #     gen <- is_s3_generic(fname, env)
-  #     mth <- is_s3_method(fname, env)
-  #   }
-  #
-  #   if (!gen & !mth) {
-  #     "function"
-  #   } else {
-  #     c("S3", if (gen) "generic", if (mth) "method")
-  #   }
-  # }
 }

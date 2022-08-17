@@ -4,17 +4,17 @@
 \alias{.isS3Method}
 \title{.isS3Method}
 \usage{
-.isS3Method(name, env = parent.frame())
+.isS3Method(method, env = parent.frame())
 }
 \arguments{
-\item{name}{Function or name of function.}
-
 \item{env}{Base environment in which to look for function definition.}
+
+\item{name}{Function or name of function.}
 }
 \value{
 TRUE/FALSE
 }
 \description{
-.isS3Method
+Checks if \code{method} is the name of a valid / registered S3 method.
 }
 \keyword{internal}
