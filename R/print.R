@@ -1,4 +1,9 @@
 
+# Attributes that are removed from the list of attributes
+# because they are displayed otherwise or are just obvious.
+.redundantAttrs <- c("class", "dim")
+
+
 #' .tableprint
 #'
 #' @param labels Labels to print, one for each statement
@@ -41,6 +46,8 @@
 #' @examples
 #' print(huh(1:3))
 print.huh <- function(x, ...) {
+  x$attr <- x$attr[!(x$attr %in% .redundantAttrs)]
+
   .tableprint(names(x), x, enum=list(class=", "))
   return(invisible(x))
 }

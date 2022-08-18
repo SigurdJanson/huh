@@ -1,6 +1,5 @@
 
 
-
 #' Determine the OOP paradigm of an object.
 #'
 #' @param x An object
@@ -28,12 +27,13 @@
 #' @param .class See `class()`
 #' @param .mode See `mode()`
 #' @param .dims See `dims()`
+#' @param .dims See `dims()`
 #' @param .paradigm The OOP the object is based on
 #'
 #' @return An `huh` object
 #' @keywords internal
 #' @noRd
-new_huh <- function(.name, .type, .class, .mode, .dims, .paradigm) {
+new_huh <- function(.name, .type, .class, .mode, .dims, .attr, .paradigm) {
   if (missing(.name) || !is.character(.name))
     stop("Object specification ('huh') needs an object name")
   if (missing(.type) || !is.character(.type))
@@ -46,6 +46,7 @@ new_huh <- function(.name, .type, .class, .mode, .dims, .paradigm) {
       class = .class,
       mode = .mode,
       dimensions = .dims,
+      attr = .attr,
       paradigm = .paradigm
     ),
     class = "huh"
@@ -79,7 +80,7 @@ huh <- function(x) {
     else length(dims)
 
   xClass <- class(x)
-  attributes(xClass) <- NULL
+  attributes(xClass) <- NULL # classes may have names and stuff which we don't need
 
   return(
     new_huh(
@@ -88,6 +89,7 @@ huh <- function(x) {
       .class = xClass,
       .mode = mode(x),
       .dims = dims,
+      .attr = names(attributes(x)),
       .paradigm = .paradigm(x)
     )
   )
