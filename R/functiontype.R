@@ -210,13 +210,13 @@
 #' ftype(t.test) # Tricky!
 #' ftype(writeLines)
 #' ftype(unlist)
-######## @importFrom rlang enexpr
 ftype <- function(f) {
   if (!is.function(f)) ##original: (!is.function(f) && !is.function(f))
     stop("`f` is not a function")
 
-  src <- ""
-  branch <- ""
+  type <- switch(tf <- typeof(f), builtin = , special = "primitive", tf) #"function"
+  paradigm <- NULL
+  virtual <- NULL
   fname <- deparse(substitute(f))
 
   ##original:
@@ -225,18 +225,17 @@ ftype <- function(f) {
   #   c("primitive", if (is_internal_generic(primitive_name(f))) "generic")
   # } else if (is_internal(f)) {
   #   c("internal", if (is_internal_generic(internal_name(f))) "generic")
-  if (is.primitive(f)) {
-    src <- "primitive"
-    if (fname %in% .knownInternalGenericS3()) #TODO: further optimise this check
-      branch <- "generic"
-    else
-      branch <- ""
+  if (type == "primitive") {
+    if (fname %in% .knownInternalGenericS3()) {
+      paradigm <- "S3"
+      virtual <- "generic"
+    }
   } else if (inherits(f, "standardGeneric")) {
-    src <- "S4"; branch <- "generic"
+    paradigm <- "S4"; virtual <- "generic"
   } else if (inherits(f, "MethodDefinition")) {
-    src <- "S4"; branch <- "method"
+    paradigm <- "S4"; virtual <- "method"
   } else if (inherits(f, "refMethodDef")) {
-    src <- "RC"; branch <- "method"
+    paradigm <- "RC"; virtual <- "method"
   } else {
 
     #fexpr <- rlang::enexpr(f) # TODO: find a way to eliminate rlang::enexpr
@@ -253,12 +252,11 @@ ftype <- function(f) {
     }
 
     if (gen || mth)
-      src <- "S3"
-    else
-      src <- "function"
-    branch <- c(if (gen) "generic", if (mth) "method")
+      paradigm <- "S3"
+    virtual <- c(if (gen) "generic", if (mth) "method")
 
   } #else
 
-  return(c(src, branch))
+  result <- list(type = type, paradigm = paradigm, virtual = virtual)
+  return(result[lengths(result) != 0])
 }
