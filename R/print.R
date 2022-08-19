@@ -44,14 +44,26 @@
 #' A formatted output of a `huh` object to the console.
 #'
 #' @param x A `huh` object
+#' @param lang Indicates which properties should be printed.
+#' Either "R" (default) or "S". See details.
 #' @param ... Additional arguments passed on to `format()`.
-#'
+#' @details `lang="S"` also prints an object's \code{\link[=mode]{mode}} and \code{\link[=storage.mode]{storage mode}}.
+#' These properties are redundant in R, where you only need [typeof()].
+#' Mode and storage mode "exist solely for S compatibility" (Wickham, 2017)
+#' and are usually not displayed.
 #' @return Returns `x` invisibly
+#' @references
+#' Wickham, H. (2017). [Advanced R](http://adv-r.had.co.nz/OO-essentials.html). 1st edition.
 #' @export
 #'
 #' @examples
 #' print(huh(1:3))
-print.huh <- function(x, ...) {
+print.huh <- function(x, lang = c("R", "S"), ...) {
+  lang <- match.arg(lang)
+  x <- switch(lang,
+         R = x[!(names(x) %in% c("mode", "storage.mode"))],
+         S = x)
+
   x$attr <- x$attr[!(x$attr %in% .redundantAttrs)]
 
   .tableprint(names(x), x, enum=list(class=", ", paradigm=", "))

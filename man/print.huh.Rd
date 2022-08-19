@@ -4,10 +4,13 @@
 \alias{print.huh}
 \title{print.huh}
 \usage{
-\method{print}{huh}(x, ...)
+\method{print}{huh}(x, lang = c("R", "S"), ...)
 }
 \arguments{
 \item{x}{A \code{huh} object}
+
+\item{lang}{Indicates which properties should be printed.
+Either "R" (default) or "S". See details.}
 
 \item{...}{Additional arguments passed on to \code{format()}.}
 }
@@ -17,6 +20,15 @@ Returns \code{x} invisibly
 \description{
 A formatted output of a \code{huh} object to the console.
 }
+\details{
+\code{lang="S"} also prints an object's \code{\link[=mode]{mode}} and \code{\link[=storage.mode]{storage mode}}.
+These properties are redundant in R, where you only need \code{\link[=typeof]{typeof()}}.
+Mode and storage mode "exist solely for S compatibility" (Wickham, 2017)
+and are usually not displayed.
+}
 \examples{
 print(huh(1:3))
+}
+\references{
+Wickham, H. (2017). \href{http://adv-r.had.co.nz/OO-essentials.html}{Advanced R}. 1st edition.
 }
