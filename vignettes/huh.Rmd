@@ -72,16 +72,6 @@ It returns an S3 object with the class `huh.how`. It is basically a list of oper
 The idea of `how` is that you do not need to check the documentation if you are unsure about subsetting. Just type `how(evilobject)` and you get the basic information in the console.
 
 
-<!-- Hence, these operators will be grouped in separate sub-structures of the list. -->
-
-<!-- ```{r eval=FALSE, include=FALSE} -->
-<!--  structure( -->
-<!--    list( -->
-<!--      vector = c("[c(...)]"), -->
-<!--      list   = c("[[...]]", "$...") -->
-<!--    ), class="huh.how" -->
-<!--  ) -->
-<!-- ``` -->
 
 ## Choosing a subsetting technique?
 
@@ -158,6 +148,32 @@ Notes:
 
 
 ![Object hierarchy in R](img/classtree.png)
+
+## Object Types
+
+Here is an overview over types:
+
+```{r echo=FALSE}
+library(rmarkdown)
+  myfunkyfunc <- function(x) print(x)
+  class(myfunkyfunc) <- "Oh so funky"
+
+  cex3 <- c("NULL", "1", "1:1", "1i",
+            "list(1)", "data.frame(x = 1)", "pairlist(pi)",
+            "c", "lm", "integer", "myfunkyfunc",
+            "formals(lm)[[1]]",  "formals(lm)[[2]]",
+            "y ~ x", "expression((1))[[1]]", "(y ~ x)[[1]]",
+            "expression(x <- pi)[[1]][[1]]")
+  lex3 <- sapply(cex3, function(x) eval(str2lang(x)))
+  mex3 <- t(sapply(lex3,
+                   function(x) c(typeof(x), class(x), mode(x), storage.mode(x))))
+  dimnames(mex3) <- list(cex3, c("typeof(.)", "class(.)", "mode(.)", "storage.mode(.)"))
+  as.data.frame(mex3) |> knitr::kable("markdown") 
+```
+
+
+Wickham (2017) confirms that `mode()` and `storage.mode()` are not really needed in R: "I recommend ignoring these functions because they’re just aliases of the names returned by `typeof()`, and exist solely for S compatibility." What is important are the basic types (`typeof()`) and the class. The class can be an implicit class provided by R. In that case it does not add much information to the type. 
+
 
 
 
