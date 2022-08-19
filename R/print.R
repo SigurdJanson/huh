@@ -25,6 +25,12 @@
       s <- paste0(s, collapse = enum[[l]])
     cat(format(l, width=lwidth, ...), ": ", s, "\n", sep="")
   }
+
+  # Remove NULL elements, first
+  labels <- labels[lengths(statements) > 0]
+  statements <- statements[lengths(statements) > 0]
+
+  # Column width for labels
   lwidth <- max(nchar(labels))
   mapply(.print, labels, statements)
 
@@ -48,7 +54,7 @@
 print.huh <- function(x, ...) {
   x$attr <- x$attr[!(x$attr %in% .redundantAttrs)]
 
-  .tableprint(names(x), x, enum=list(class=", "))
+  .tableprint(names(x), x, enum=list(class=", ", paradigm=", "))
   return(invisible(x))
 }
 
