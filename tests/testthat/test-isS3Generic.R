@@ -58,6 +58,12 @@ test_that("user defined generics detected even if use non-standard", {
 
 
 
+
+
+
+
+
+
 # Test taken from roxygen2 - but why shouldn't we be able to overwrite/conceal a primitive
 # test_that("user defined functions override primitives", {
 #   c <- function(x) x + 1

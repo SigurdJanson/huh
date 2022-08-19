@@ -59,4 +59,12 @@ test_that("functions calling UseMethod (regardless of the `{}`) yield TRUE", {
     expect_false(.callsUseMethod(f))
 })
 
+test_that("missing argument yields FALSE", {
+  expect_false(.callsUseMethod())
+})
 
+test_that("function with only one symbol in the body that isn't UseMethod yields FALSE", {
+  myfunc <- function() TRUE
+
+  expect_false(.callsUseMethod(body(myfunc)))
+})
