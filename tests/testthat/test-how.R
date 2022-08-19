@@ -132,6 +132,78 @@ test_that("vector, complex", {
 })
 
 
+# FACTOR ==================
+test_that("factor", {
+  obj <- factor(sample(1:3, 24, TRUE))
+  expect(isTRUE(is.factor(obj)), "Test failed assumption")
+
+  # act
+  result <- how(obj)
+
+  # assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "obj")
+  expect_identical(result$ops, list(vector = c("[c(...)]", "[[...]]")))
+  expect_match(result$comments, "Access")
+})
+
+
+
+# EXPRESSION ==================
+test_that("expression", {
+  obj <- expression(1 + 0:9)
+  expect(isTRUE(is.expression(obj)), "Test failed assumption")
+
+  # act
+  result <- how(obj)
+
+  # assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "obj")
+  expect_identical(result$ops, list(expression = c("[c(...)]"),
+                                    `mixed types` = c("[[...]]")))
+})
+
+
+# ENVIRONMENT ==================
+test_that("environment", {
+  env <- new.env()
+  expect(isTRUE(is.environment(env)), "Test failed assumption")
+
+  # act
+  result <- how(env)
+
+  # assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "env")
+  expect_identical(result$ops, list(`mixed types` = c("[[...]]", "$...")))
+  expect_match(result$comments, "Only character indices")
+})
+
+
+
+# QUOSURE ==================
+test_that("quosure", {
+  q <- rlang::quo(1:3)
+  expect(isTRUE(rlang::is_quosure(q)), "Test failed assumption")
+
+  # act
+  result <- how(q)
+
+  # assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "q")
+  expect_identical(result$ops, list(NULL))
+  expect_match(result$comments, "deprecated")
+})
+
+
+
+
 # NOT SUBSETTABLE =========
 test_that("Not subsettable", {
   expect_match(
@@ -140,4 +212,59 @@ test_that("Not subsettable", {
   expect_match(
     how(call("u"))$comments, "Object not subsettable",
   )
+})
+
+
+# UNKNOWN CLASS ==========
+# do not use the same class name in all tests;
+# registerS3method() is going to store the association
+# across tests.
+
+test_that("`how.default` finds `[` method for unknown classes", {
+  `[.unknown1` <- function(x) TRUE
+  registerS3method("[", "unknown1", "[.unknown1")
+
+  obj <- structure(list(1, 2, "3"), class="unknown1")
+
+  # Act
+  result <- how(obj)
+
+  # Assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "obj")
+  expect_identical(result$ops, list(c("[c(...)]")))
+})
+
+
+test_that("`how.default` finds `[[` method for unknown classes", {
+  `[[.unknown2` <- function(x) TRUE
+  registerS3method("[[", "unknown2", "[[.unknown2")
+
+  obj <- structure(list(1, 2, "3"), class="unknown2")
+
+  # Act
+  result <- how(obj)
+
+  # Assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "obj")
+  expect_identical(result$ops, list(c("[[...]]")))
+})
+
+test_that("`how.default` finds `$` method for unknown classes", {
+  `$.unknown3` <- function(x) TRUE
+  registerS3method("$", "unknown3", "$.unknown3")
+
+  obj <- structure(list(1, 2, 3), class="unknown3")
+
+  # Act
+  result <- how(obj)
+
+  # Assert
+  expect_s3_class(result, .ClassName)
+  expect_named(result, .NamesOfHow)
+  expect_identical(result$name, "obj")
+  expect_identical(result$ops, list(c("$...")))
 })
