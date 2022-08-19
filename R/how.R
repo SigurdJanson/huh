@@ -45,7 +45,7 @@ how <- function(x) UseMethod("how")
 #' @importFrom utils getS3method
 #' @export
 how.default <- function(x) {
-  if (is.atomic(x)) {
+  if (is.atomic(x) && is.null(attr(x, "class"))) {
     result <- .how_atomic(x, deparse(substitute(x)))
   } else {
     xclass <- attr(x, "class")
@@ -55,9 +55,9 @@ how.default <- function(x) {
       dollar <- sapply(xclass, \(y) getS3method("$", y, optional=TRUE))
 
       ops <- list()
-      if (!is.null(single)) ops <- c(ops, c("[c(...)]"))
-      if (!is.null(double)) ops <- c(ops, c("[[...]]"))
-      if (!is.null(dollar)) ops <- c(ops, c("$..."))
+      if (!all(sapply(single, is.null))) ops <- c(ops, c("[c(...)]"))
+      if (!all(sapply(double, is.null))) ops <- c(ops, c("[[...]]"))
+      if (!all(sapply(dollar, is.null))) ops <- c(ops, c("$..."))
 
       result <-
         new_huh.how(
