@@ -116,7 +116,7 @@
   if (name == "") return(FALSE)
 
   if (is.character(name)) {
-    f <- get(name, envir = env)
+    f <- get0(name, envir = env)
   } else {
     f <- name
     name <- deparse(substitute(f))
@@ -211,13 +211,18 @@
 #' ftype(writeLines)
 #' ftype(unlist)
 ftype <- function(f) {
-  if (!is.function(f)) ##original: (!is.function(f) && !is.function(f))
+  if (is.character(f) || is.name(f)) {
+    fname <- as.character(f)
+    f <- get0(f, mode="function")
+  } else if (is.function(f)) { ##original: (!is.function(f) && !is.function(f))
+    fname <- deparse(substitute(f))
+  } else {
     stop("`f` is not a function")
+  }
 
   type <- switch(tf <- typeof(f), builtin = , special = "primitive", tf) #"function"
   paradigm <- NULL
   virtual <- NULL
-  fname <- deparse(substitute(f))
 
   ##original:
   ## here we do not distinguish between "internal generics" and "primitive generics"
@@ -239,17 +244,17 @@ ftype <- function(f) {
   } else {
 
     #fexpr <- rlang::enexpr(f) # TODO: find a way to eliminate rlang::enexpr
-    fexpr <- substitute(f)
+    #fexpr <- NULL #fexpr <- substitute(f)
     env <- parent.frame(1) ##original: rlang::caller_env(n=1) parent.frame(n + 1)
 
-    if (typeof(fexpr) != "symbol") { ##original: if (!is_symbol(fexpr))
-      warning("Determination of S3 status requires function name", call. = FALSE)
-      gen <- FALSE
-      mth <- FALSE
-    } else {
+    # if (!is.name(fexpr)) { ##original: if (!is_symbol(fexpr))
+    #   warning("Determination of S3 status requires function name", call. = FALSE)
+    #   gen <- FALSE
+    #   mth <- FALSE
+    # } else {
       gen <- .isS3Generic(fname, env)
       mth <- .isS3Method(fname, env)
-    }
+    # }
 
     if (gen || mth)
       paradigm <- "S3"

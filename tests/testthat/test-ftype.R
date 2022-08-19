@@ -37,10 +37,6 @@ test_that("various flavours of S3 return as expected", {
 })
 
 
-test_that("warns when trying to find S3 status of inline function", {
-  expect_warning(ftype(function(x) x), "requires function name")
-})
-
 
 test_that("function can be both S3 generic and method", {
   f <- function(x) UseMethod("f")
@@ -80,3 +76,35 @@ test_that("RC methods return as expected", {
 })
 
 
+
+
+test_that("function names as string work, too", {
+  expect_identical(
+    ftype("sd"),
+    list(type = "closure"))
+  expect_identical(
+    ftype("unlist"),
+    list(type = "closure", paradigm = "S3", virtual = "generic"))
+  expect_equal(
+    ftype("t.data.frame"),
+    list(type = "closure", paradigm = "S3", virtual = "method"))
+  expect_equal(
+    ftype("t.test"),
+    list(type = "closure", paradigm = "S3", virtual = "generic"))
+})
+
+
+test_that("sybols/names work, too", {
+  expect_identical(
+    ftype(as.name("sd")),
+    list(type = "closure"))
+  expect_identical(
+    ftype(as.name("unlist")),
+    list(type = "closure", paradigm = "S3", virtual = "generic"))
+  expect_equal(
+    ftype(as.name("t.data.frame")),
+    list(type = "closure", paradigm = "S3", virtual = "method"))
+  expect_equal(
+    ftype(as.name("t.test")),
+    list(type = "closure", paradigm = "S3", virtual = "generic"))
+})
