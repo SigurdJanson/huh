@@ -24,7 +24,7 @@ test_that("vector, integer", {
       class = "integer",
       mode = "numeric",
       dimensions = 1L,
-      paradigm = "implicit"
+      paradigm = c("implicit", "object")
       )
   )
 })
@@ -47,7 +47,8 @@ test_that("factor, character", {
       class = "factor",
       mode = "numeric",
       dimensions = 1L,
-      paradigm = "S3 class"
+      attr = c("levels", "class"),
+      paradigm = c("S3 class", "object")
     )
   )
 })
@@ -69,7 +70,8 @@ test_that("matrix", {
       class = c("matrix", "array"),
       mode = "numeric",
       dimensions = 2L,
-      paradigm = "implicit"
+      attr = c("dim"),
+      paradigm = c("implicit", "object")
     )
   )
 })
@@ -92,7 +94,8 @@ test_that("data frame", {
       class = "data.frame",
       mode = "list",
       dimensions = 2L,
-      paradigm = "S3 class"
+      attr = c("names", "row.names", "class"),
+      paradigm = c("S3 class", "object")
     )
   )
 })
@@ -100,22 +103,18 @@ test_that("data frame", {
 
 
 test_that("function", {
-  obj <- mean
-  expect(isTRUE(is.function(obj)), "Test failed assumption")
-
   # act
-  result <- huh(obj)
+  result <- huh(mean)
 
   # assert
   expect_identical(
     result,
     makeHuhList(
-      name = "obj",
+      name = "mean",
       type = "closure",
       class = "function",
       mode = "function",
-      dimensions = 0L,
-      paradigm = "implicit"
+      paradigm = c("S3", "generic")
     )
   )
 })
@@ -138,7 +137,7 @@ test_that("symbol", {
       class = "name",
       mode = "name",
       dimensions = 0L,
-      paradigm = "implicit"
+      paradigm = c("implicit", "object")
     )
   )
 })
@@ -162,7 +161,8 @@ test_that("S4", {
       class = "student",
       mode = "S4",
       dimensions = 0L,
-      paradigm = "S4 class"
+      attr = c("name", "age", "GPA", "class"),
+      paradigm = c("S4 class", "object")
     )
   )
 })
@@ -186,7 +186,8 @@ test_that("Reference class", {
       class = "Account",
       mode = "S4",
       dimensions = 0L,
-      paradigm = "Reference class"
+      attr = c(".xData", "class"),
+      paradigm = c("Reference class", "object")
     )
   )
 })

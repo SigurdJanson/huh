@@ -3,6 +3,9 @@
 #' Determine the OOP paradigm of an object.
 #'
 #' @param x An object
+#' @note x must be an object except functions, i.e.
+#' `!(typeof(x) %in% c("closure", "builtin", "special", "function")`.
+#' This function will not check the type.
 #' @return Is x an implicit, S3, S4, RC, or R6 object.
 #' @keywords internal
 #' @noRd
@@ -39,16 +42,17 @@ new_huh <- function(.name, .type, .class, .mode, .dims, .attr, .paradigm) {
   if (missing(.type) || !is.character(.type))
     stop("Object specification ('huh') needs a type")
 
+  result <- list(
+    name = .name,
+    type = .type,
+    class = .class,
+    mode = .mode,
+    dimensions = .dims,
+    attr = .attr,
+    paradigm = .paradigm
+  )
   result <- structure(
-    list(
-      name = .name,
-      type = .type,
-      class = .class,
-      mode = .mode,
-      dimensions = .dims,
-      attr = .attr,
-      paradigm = .paradigm
-    ),
+    result[lengths(result) > 0L],
     class = "huh"
   )
   return(result)
@@ -72,15 +76,27 @@ new_huh <- function(.name, .type, .class, .mode, .dims, .attr, .paradigm) {
 huh <- function(x) {
   if (is.null(x)) return(NULL)
 
-  dims <- dim(x)
-  dims <-
-    if (is.null(dims))
-      if (!is.vector(x) && !is.atomic(x)) 0L
-      else 1L
-    else length(dims)
-
   xClass <- class(x)
   attributes(xClass) <- NULL # classes may have names and stuff which we don't need
+
+  if (storage.mode(x) == "function") { # closure, builtin, special, function
+    fType <- ftype(substitute(x))
+    xType <- fType$type
+    xParadigm <- c(fType$paradigm, fType$virtual)
+    dims <- NULL
+  } else {
+    xType <- typeof(x)
+    xParadigm <- c(.paradigm(x), "object")
+
+    dims <- dim(x)
+    dims <-
+      if (is.null(dims))
+        if (!is.vector(x) && !is.atomic(x)) 0L
+        else 1L
+      else length(dims)
+  }
+
+  xAttr <- names(attributes(x))
 
   return(
     new_huh(
@@ -89,8 +105,8 @@ huh <- function(x) {
       .class = xClass,
       .mode = mode(x),
       .dims = dims,
-      .attr = names(attributes(x)),
-      .paradigm = .paradigm(x)
+      .attr = xAttr,
+      .paradigm = xParadigm
     )
   )
 }
