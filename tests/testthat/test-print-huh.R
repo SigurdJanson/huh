@@ -1,6 +1,6 @@
 
 test_that("Arguments lang='S' and 'R' deliver different results", {
-  SOutput <- c("mode") #, "storage mode")
+  SOutput <- c("mode", "storage mode")
   # Act
   resultR <- capture_output_lines(print(huh(1:3)))
   resultS <- capture_output_lines(print(huh(1:3), lang="S"))

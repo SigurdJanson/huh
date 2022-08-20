@@ -23,6 +23,7 @@ test_that("vector, integer", {
       type = "integer",
       class = "integer",
       mode = "numeric",
+      storage.mode = "integer",
       dimensions = 1L,
       paradigm = c("implicit", "object")
       )
@@ -46,6 +47,7 @@ test_that("factor, character", {
       type = "integer",
       class = "factor",
       mode = "numeric",
+      storage.mode = "integer",
       dimensions = 1L,
       attr = c("levels", "class"),
       paradigm = c("S3 class", "object")
@@ -69,6 +71,7 @@ test_that("matrix", {
       type = "integer",
       class = c("matrix", "array"),
       mode = "numeric",
+      storage.mode = "integer",
       dimensions = 2L,
       attr = c("dim"),
       paradigm = c("implicit", "object")
@@ -93,6 +96,7 @@ test_that("data frame", {
       type = "list",
       class = "data.frame",
       mode = "list",
+      storage.mode = "list",
       dimensions = 2L,
       attr = c("names", "row.names", "class"),
       paradigm = c("S3 class", "object")
@@ -114,6 +118,7 @@ test_that("function", {
       type = "closure",
       class = "function",
       mode = "function",
+      storage.mode = "function",
       paradigm = c("S3", "generic")
     )
   )
@@ -136,6 +141,7 @@ test_that("symbol", {
       type = "symbol",
       class = "name",
       mode = "name",
+      storage.mode = "symbol",
       dimensions = 0L,
       paradigm = c("implicit", "object")
     )
@@ -160,6 +166,7 @@ test_that("S4", {
       type = "S4",
       class = "student",
       mode = "S4",
+      storage.mode = "S4",
       dimensions = 0L,
       attr = c("name", "age", "GPA", "class"),
       paradigm = c("S4 class", "object")
@@ -185,6 +192,7 @@ test_that("Reference class", {
       type = "S4",
       class = "Account",
       mode = "S4",
+      storage.mode = "S4",
       dimensions = 0L,
       attr = c(".xData", "class"),
       paradigm = c("Reference class", "object")

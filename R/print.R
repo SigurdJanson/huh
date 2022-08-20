@@ -3,6 +3,10 @@
 # because they are displayed otherwise or are just obvious.
 .redundantAttrs <- c("class", "dim")
 
+# Attributes that are only printed with language=S
+.sTypes <- c("mode", "storage.mode")
+
+
 
 #' .tableprint
 #'
@@ -16,11 +20,14 @@
 #' If you add a list element `class=", "` you specify a separator for the values and
 #' get an output like this: "matrix, array". `class="_"` would yield "matrix_array".
 #'
+#' * Dots in labels are replaced with spaces.
+#' * NULL elements are dropped.
 #' @return `invisible(NULL)`
 #' @keywords internal
 #' @noRd
 .tableprint <- function(labels, statements, enum = NULL, ...) {
   .print <- function(l, s) {
+    l <- gsub("\\.", " ", l)
     if (!is.null(enum) && l %in% names(enum))
       s <- paste0(s, collapse = enum[[l]])
     cat(format(l, width=lwidth, ...), ": ", s, "\n", sep="")
@@ -63,7 +70,7 @@
 print.huh <- function(x, lang = c("R", "S"), ...) {
   lang <- match.arg(lang)
   x <- switch(lang,
-         R = x[!(names(x) %in% c("mode", "storage.mode"))],
+         R = x[!(names(x) %in% .sTypes)],
          S = x)
 
   x$attr <- x$attr[!(x$attr %in% .redundantAttrs)]

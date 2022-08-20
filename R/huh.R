@@ -29,14 +29,15 @@
 #' @param .type See `typeof()`
 #' @param .class See `class()`
 #' @param .mode See `mode()`
+#' @param .smode See `storage.mode()`
 #' @param .dims See `dims()`
-#' @param .dims See `dims()`
-#' @param .paradigm The OOP the object is based on
+#' @param .attr See `attributes()`
+#' @param .paradigm The OOP paradigm the object is based on
 #'
 #' @return An `huh` object
 #' @keywords internal
 #' @noRd
-new_huh <- function(.name, .type, .class, .mode, .dims, .attr, .paradigm) {
+new_huh <- function(.name, .type, .class, .mode, .storagemode, .dims, .attr, .paradigm) {
   if (missing(.name) || !is.character(.name))
     stop("Object specification ('huh') needs an object name")
   if (missing(.type) || !is.character(.type))
@@ -47,6 +48,7 @@ new_huh <- function(.name, .type, .class, .mode, .dims, .attr, .paradigm) {
     type = .type,
     class = .class,
     mode = .mode,
+    storage.mode = .storagemode,
     dimensions = .dims,
     attr = .attr,
     paradigm = .paradigm
@@ -79,7 +81,9 @@ huh <- function(x) {
   xClass <- class(x)
   attributes(xClass) <- NULL # classes may have names and stuff which we don't need
 
-  if (storage.mode(x) == "function") { # closure, builtin, special, function
+  xStorageMode <- storage.mode(x)
+
+  if (xStorageMode == "function") { # closure, builtin, special, function
     fType <- ftype(substitute(x))
     xType <- fType$type
     xParadigm <- c(fType$paradigm, fType$virtual)
@@ -104,6 +108,7 @@ huh <- function(x) {
       .type = typeof(x),
       .class = xClass,
       .mode = mode(x),
+      .storagemode = xStorageMode,
       .dims = dims,
       .attr = xAttr,
       .paradigm = xParadigm
