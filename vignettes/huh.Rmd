@@ -34,7 +34,7 @@ The "huh?" package wants to describe objects to make it easier to understand wha
 
 ## Subsetting
 
-`how()` identifies ways to subset an object. That can be difficult at the beginning when you learn R. Wickham (2017) shows five different ways to extract a single value from a data frame. And you can easily recombine these five solutions to create even more.
+`how()` shows some ways to subset an object. That can be difficult at the beginning when you learn R. Wickham (2017) shows five different ways to extract a single value from a data frame. And you can easily recombine these five solutions to create even more.
 
 ```{r 5 ways}
 # 5 subsetting ways by Wickham (2017)

@@ -15,7 +15,7 @@ test_that("vector, integer", {
   expect_s3_class(result, .ClassName)
   expect_named(result, .NamesOfHow)
   expect_identical(result$name, "obj")
-  expect_identical(result$ops, list(vector = c("[c(...)]", "[[...]]")))
+  expect_identical(result$ops, list(integer = c("[c(...)]", "[[...]]")))
   expect_null(result$comments)
 })
 
@@ -30,7 +30,7 @@ test_that("named vector, integer", {
   expect_s3_class(result, .ClassName)
   expect_named(result, .NamesOfHow)
   expect_identical(result$name, "obj")
-  expect_identical(result$ops, list(vector = c("[c(...)]", "[[...]]")))
+  expect_identical(result$ops, list(integer = c("[c(...)]", "[[...]]")))
   expect_match(result$comments, ".*attr")
 })
 
@@ -68,7 +68,7 @@ test_that("array", {
   expect_s3_class(result, .ClassName)
   expect_named(result, .NamesOfHow)
   expect_identical(result$name, "obj")
-  expect_named(result$ops, c("vector", "matrix", "array"))
+  expect_named(result$ops, c("integer", "matrix", "array"))
   # MAYBE TEST CONTENT HERE
   expect_length(result$comments, 5L)
 })
@@ -78,7 +78,7 @@ test_that("array", {
 # MATRIX ==============
 
 test_that("matrix", {
-  obj <- matrix(1:12, c(4, 3))
+  obj <- matrix(as.double(1:12), c(4, 3))
   expect(isTRUE(is.matrix(obj)), "Test failed assumption")
 
   # act
@@ -88,7 +88,7 @@ test_that("matrix", {
   expect_s3_class(result, .ClassName)
   expect_named(result, .NamesOfHow)
   expect_identical(result$name, "obj")
-  expect_named(result$ops, c("vector", "matrix"))
+  expect_named(result$ops, c("double", "matrix"))
   # MAYBE TEST CONTENT HERE
   expect_length(result$comments, 4L)
 })
@@ -127,7 +127,7 @@ test_that("vector, complex", {
   expect_s3_class(result, .ClassName)
   expect_named(result, .NamesOfHow)
   expect_identical(result$name, "obj")
-  expect_identical(result$ops, list(vector = c("[c(...)]", "[[...]]")))
+  expect_identical(result$ops, list(complex = c("[c(...)]", "[[...]]")))
   expect_match(result$comments, ".*'Re.*'Im")
 })
 
@@ -144,7 +144,7 @@ test_that("factor", {
   expect_s3_class(result, .ClassName)
   expect_named(result, .NamesOfHow)
   expect_identical(result$name, "obj")
-  expect_identical(result$ops, list(vector = c("[c(...)]", "[[...]]")))
+  expect_identical(result$ops, list(integer = c("[c(...)]", "[[...]]")))
   expect_match(result$comments[1], "Access")
   expect_match(result$comments[2], "subsetting with `\\[]`")
   expect_match(result$comments[3], "drop=TRUE")

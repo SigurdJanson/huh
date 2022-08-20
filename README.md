@@ -1,4 +1,4 @@
-2022-08-20
+2022-08-21
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -101,7 +101,7 @@ x <- 1:3
 how(x)
 #> Subsetting 'x'
 #> 
-#> vector 
+#> integer 
 #> x[c(...)], x[[...]]
 
 # 2-dimensional access
@@ -109,7 +109,7 @@ y <- matrix(1:4, 2)
 how(y)
 #> Subsetting 'y'
 #> 
-#> vector 
+#> integer 
 #> y[c(...)], y[c(...), ...], y[[...]]
 #> matrix 
 #> y[c(...), c(...)]

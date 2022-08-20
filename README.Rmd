@@ -46,7 +46,6 @@ It basically offers only two functions:
 
 **Example**.
 
-
 ```{r huh1, eval=TRUE, include=TRUE}
 library(huh)
 huh(1:3)

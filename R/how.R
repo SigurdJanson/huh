@@ -83,6 +83,7 @@ how.default <- function(x) {
 #' Helper for `how.default` that handles the case of atomic vectors
 #'
 #' @param x an atomic vector
+#' @param name The original name of `x`
 #'
 #' @return An object of class `huh.how`.
 #' @keywords internal
@@ -101,6 +102,7 @@ how.default <- function(x) {
       .name = name,
       .ops = list(vector = c("[c(...)]", "[[...]]"))
     )
+  names(result$ops)[names(result$ops) == "vector"] <- typeof(x)
   return(result)
 }
 
@@ -123,7 +125,7 @@ how.list <- function(x) {
 #' @describeIn how For arrays
 #' @export
 how.array <- function(x) {
-  new_huh.how(
+  result <- new_huh.how(
     .name = deparse(substitute(x)),
     .ops = list(
       vector = c("[c(...)]", "[c(...), ..., ...]", "[[...]]"),
@@ -136,13 +138,15 @@ how.array <- function(x) {
                   "* 3-dim results are arrays.",
                   "Add the argument `drop=FALSE` to keep the class")
   )
+  names(result$ops)[names(result$ops) == "vector"] <- typeof(x)
+  return(result)
 }
 
 
 #' @describeIn how For matrices
 #' @export
 how.matrix <- function(x) {
-  new_huh.how(
+  result <- new_huh.how(
     .name = deparse(substitute(x)),
     .ops = list(
       vector = c("[c(...)]", "[c(...), ...]", "[[...]]"),
@@ -153,6 +157,8 @@ how.matrix <- function(x) {
                   "* 2-dim results class 'matrix'",
                   "Add the argument `drop=FALSE` to keep the class")
   )
+  names(result$ops)[names(result$ops) == "vector"] <- typeof(x)
+  return(result)
 }
 
 
