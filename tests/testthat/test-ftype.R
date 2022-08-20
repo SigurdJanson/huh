@@ -1,8 +1,6 @@
 
 
 test_that("ftype() returns the same types as `sloop::ftype()` does", {
-
-
   # These are different: we do not identify internals
   # * non-primitives are simply just functions
   expect_identical(ftype(writeLines), list(type = "closure"))
@@ -94,7 +92,7 @@ test_that("function names as string work, too", {
 })
 
 
-test_that("sybols/names work, too", {
+test_that("symbols/names work, too", {
   expect_identical(
     ftype(as.name("sd")),
     list(type = "closure"))
@@ -107,4 +105,18 @@ test_that("sybols/names work, too", {
   expect_equal(
     ftype(as.name("t.test")),
     list(type = "closure", paradigm = "S3", virtual = "generic"))
+})
+
+
+
+# ERROR =====================
+
+test_that("non-functions throw an error", {
+  nonfunc <- "sd_this_will_never_be_a_string_that_will_be_found_to_be_a_function"
+  expect_error(
+    ftype(nonfunc),
+    "'f'.*not.*function")
+  expect_error(
+    ftype(as.name(nonfunc)),
+    "'f'.*not.*function")
 })

@@ -10,7 +10,11 @@ ftype(f)
 \item{f}{unquoted function name}
 }
 \value{
-a character of vector of length 1 or 2.
+A named list \code{list(type = type, paradigm = paradigm, virtual = virtual)}.
+The entries \code{paradigm} and \code{virtual} are optional and only present when
+the function is an OOP method. In that case \code{paradigm} indicates one of S3, S4,
+RC (reference classes), or R6. \code{virtual} indicates if the function is a generic
+or a method.
 }
 \description{
 This function figures out whether the input function is a

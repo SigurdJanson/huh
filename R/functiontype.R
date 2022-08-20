@@ -10,7 +10,7 @@
 #' @keywords internal
 #' @noRd
 .knownMethodsS3 <- function(nsName = NULL) {
-  if (is.null(nsName) || nsName == "base") {
+  if (is.null(nsName) || identical(nsName, "base")) {
     return(
       asNamespace("base", base.OK = TRUE)[[".__S3MethodsTable__."]] |>
         as.list() |>
@@ -18,6 +18,7 @@
     )
   } else {
     if (!is.character(nsName)) stop("Namespace name is not a character string")
+    if (length(nsName) == 0) stop("Namespace name is empty")
     ns <- asNamespace(nsName, base.OK = FALSE)
     return(get("S3methods", envir = ns[[".__NAMESPACE__."]])[, 3L])
   }
@@ -202,7 +203,11 @@
 #' generics as I do not see what value that has for users (except may curiosity).
 #'
 #' @param f unquoted function name
-#' @return a character of vector of length 1 or 2.
+#' @return A named list `list(type = type, paradigm = paradigm, virtual = virtual)`.
+#' The entries `paradigm` and `virtual` are optional and only present when
+#' the function is an OOP method. In that case `paradigm` indicates one of S3, S4,
+#' RC (reference classes), or R6. `virtual` indicates if the function is a generic
+#' or a method.
 #' @export
 #' @examples
 #' ftype(`%in%`)
@@ -215,10 +220,11 @@ ftype <- function(f) {
   if (is.character(f) || is.name(f)) {
     fname <- as.character(f)
     f <- get0(f, mode="function")
+    if (is.null(f)) stop("Argument 'f' is not a known function in this context")
   } else if (is.function(f)) { ##original: (!is.function(f) && !is.function(f))
     fname <- deparse(substitute(f))
   } else {
-    stop("`f` is not a function")
+    stop("'f' is not a function")
   }
 
   type <- switch(tf <- typeof(f), builtin = , special = "primitive", tf) #"function"
