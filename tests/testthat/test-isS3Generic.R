@@ -1,3 +1,6 @@
+# TODO: environment argument isn't really tested
+
+
 test_that("primitive generics detected", {
   expect_true(.isS3Generic("["))
   expect_true(.isS3Generic("[["))
@@ -23,7 +26,9 @@ test_that("non-functions are not generics", {
 
   expect_false(.isS3Generic("a"))
   expect_false(.isS3Generic("b"))
-  expect_false(.isS3Generic("c"))
+
+  # Cannot distinguish `c()` from `c`.
+  expect_true(.isS3Generic("c"))
 })
 
 
@@ -58,9 +63,27 @@ test_that("user defined generics detected even if use non-standard", {
 
 
 
+# SYMBOL AS ARGUMENT ==============
+test_that("existing symbol is translated and yields TRUE", {
+  expect_true(.isS3Generic(as.symbol("mean")))
+  expect_false(.isS3Generic(as.symbol("mean.difftime")))
+})
 
 
 
+# EXCEPTIONS ============
+test_that("missing argument throws error", {
+  expect_error(.isS3Generic())
+})
+
+test_that("empty string returns FALSE", {
+  expect_false(.isS3Generic(""))
+})
+
+test_that("closure throw an error", {
+  expect_error(.isS3Generic(mean))
+  expect_error(.isS3Generic(mean.POSIXct))
+})
 
 
 

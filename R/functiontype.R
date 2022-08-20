@@ -95,34 +95,35 @@
 #'
 #' Determine if a function is an S3 generic.
 #'
-#' @param name Function or name of function.
+#' @param name A name of a function (i.e. a character string or symbol).
 #' @param env Base environment in which to look for function definition.
 #' @return TRUE/FALSE
 #' @details
-#' If the argument `name` is a function it will try to determine it's name with
-#' `deparse(substitute(name))`. If a function has been passed on through several functions
-#' The original name may not be determined anymore.
-#'
 #' `.isS3Generic` looks at the function body to see if it
 #' calls [UseMethod()]. If not, it compares the function name to
 #' `.knownInternalGenericS3()` to make sure it also recognises internal or primitive
-#' generics
+#' generics. That way the function may not be able to distinguish between
+#' objects and functions with same name. Example: `c <- data.frame(); .isS3Generic("c")`
+#' does not return `FALSE` as a test of other logicals would. Since `c()` exists
+#' in `.knownInternalGenericS3()` this function will return `TRUE`.
 #'
 #' @keywords internal
 #' @references Adapted from [roxygen2](https://github.com/r-lib/roxygen2/) and optimised.
 #' @noRd
 .isS3Generic <- function(name, env = parent.frame()) {
   if (missing(name)) stop("Missing function name. Nothing to do.")
-  if (name == "") return(FALSE)
 
+  if (is.name(name))
+    name <- as.character(name) #translate name/symbol to string
   if (is.character(name)) {
-    f <- get0(name, envir = env)
+    if (name == "") return(FALSE)
+    f <- get0(name, mode="function", envir = env)
+    if (is.null(f)) return(FALSE)
   } else {
-    f <- name
-    name <- deparse(substitute(f))
+    stop("'name' is not of character or symbol")
   }
 
-  if (!exists(name, envir = env)) return(FALSE)
+  #if (!exists(name, mode="function", envir = env)) return(FALSE)
   if (!is.function(f)) return(FALSE)
 
   if (inherits(f, "groupGenericFunction")) return(TRUE)
