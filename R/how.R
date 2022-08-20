@@ -239,36 +239,3 @@ how.quosure <- function(x) {
 }
 
 
-# print_handling.2d.atomic <- function(x, oname) {
-#   labels    <- c("Single element", "Whole row", "Whole column",
-#                  "Row subset", "Column subset")
-#   statement <- c("[row, col]", "[row, ]", "[, col]", "[row, c(col1, ...)]", "[c(row1, ...), column]")
-#   statement <- paste(oname, statement, sep = "")
-#   .formatprint(labels, statement)
-#   cat("Result: ATOMIC VECTOR\n")
-#
-#   labels    <- c("Any multi-access")
-#   statement <- paste(oname, c("[c(row1, row2, ...), c(col1, col2, ...)]"), sep = "")
-#   .formatprint(labels, statement)
-#   cat("> Result: MATRIX / ARRAY\n")
-#
-#   return(invisible(NULL))
-# }
-
-
-# print_handling.nd.atomic <- function(x, oname) {
-#   labels    <- c("Single element", "Whole row", "Whole column")
-#   statement <- c("[row, col, ...]", "[row, , ]", "[, col, ]")
-#   statement <- paste(oname, statement, sep = "")
-#   .formatprint(labels, statement)
-#   cat("> Result: ATOMIC VECTOR\n")
-#
-#   labels    <- c("Row subset", "Column subset", "Any multi-access")
-#   statement <- c("[row, col, ...]", "[row, , ]", "[, col, ]")
-#   statement <- paste(oname, statement, sep = "")
-#
-#   .formatprint(labels, statement)
-#   cat("> Result: MATRIX / ARRAY\n")
-#
-#   return(invisible(NULL))
-# }

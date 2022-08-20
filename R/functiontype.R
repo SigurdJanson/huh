@@ -137,36 +137,6 @@
 
 
 
-# .isS3Method <- function(name, env = parent.frame()) {
-#   if (missing(name)) stop("Missing function name. Nothing to do.")
-#   if (name == "") return(FALSE)
-#
-#   if (is.character(name)) {
-#     f <- get(name, envir = env)
-#   } else {
-#     f <- name
-#     name <- deparse(substitute(f))
-#   }
-#
-#   # Search in the last environment of the search path first
-#   # (assumption: we get most hits there)
-#   knowns <- .knownMethodsS3()
-#   if (name %in% knowns)
-#     return(TRUE)
-#   else {
-#     if (identical(env, globalenv())) return(FALSE)
-#
-#     # Search through the search path
-#
-#     # TODO: continue
-#     ns <- asNamespace(environmentName(env), base.OK = TRUE)
-#     nsName <- getNamespaceInfo(ns, "spec")[["name"]]
-#     knowns <- .knownMethodsS3(nsName)
-#   }
-#
-#   return()
-# }
-
 
 
 #' .isS3Method
@@ -231,12 +201,6 @@ ftype <- function(f) {
   paradigm <- NULL
   virtual <- NULL
 
-  ##original:
-  ## here we do not distinguish between "internal generics" and "primitive generics"
-  # if (is.primitive(f)) {
-  #   c("primitive", if (is_internal_generic(primitive_name(f))) "generic")
-  # } else if (is_internal(f)) {
-  #   c("internal", if (is_internal_generic(internal_name(f))) "generic")
   if (type == "primitive") {
     if (fname %in% .knownInternalGenericS3()) {
       paradigm <- "S3"
@@ -250,18 +214,10 @@ ftype <- function(f) {
     paradigm <- "RC"; virtual <- "method"
   } else {
 
-    #fexpr <- rlang::enexpr(f) # TODO: find a way to eliminate rlang::enexpr
-    #fexpr <- NULL #fexpr <- substitute(f)
     env <- parent.frame(1) ##original: rlang::caller_env(n=1) parent.frame(n + 1)
 
-    # if (!is.name(fexpr)) { ##original: if (!is_symbol(fexpr))
-    #   warning("Determination of S3 status requires function name", call. = FALSE)
-    #   gen <- FALSE
-    #   mth <- FALSE
-    # } else {
-      gen <- .isS3Generic(fname, env)
-      mth <- .isS3Method(fname, env)
-    # }
+    gen <- .isS3Generic(fname, env)
+    mth <- .isS3Method(fname, env)
 
     if (gen || mth)
       paradigm <- "S3"
