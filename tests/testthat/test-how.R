@@ -187,6 +187,7 @@ test_that("environment", {
 
 # QUOSURE ==================
 test_that("quosure", {
+  skip_if_not_installed("rlang", minimum_version = NULL)
   q <- rlang::quo(1:3)
   expect(isTRUE(rlang::is_quosure(q)), "Test failed assumption")
 
