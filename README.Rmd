@@ -17,32 +17,76 @@ knitr::opts_chunk$set(
 <img src="vignettes/img/logo_huh.svg" align="right" width="20%"/>
 
 <!-- badges: start -->
-[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![Codecov test coverage](https://codecov.io/gh/SigurdJanson/huh/branch/main/graph/badge.svg)](https://app.codecov.io/gh/SigurdJanson/huh?branch=main)
 <!-- badges: end -->
 
 
+Learning R can be hard. R objects can be ... how may we put it ... intricate? Not only is there is a large variety of objects. That is common for well established programming languages. The issue is rather that sometimes things may look similar but have subtle differences. All in all handling R objects can be quite difficult for a beginner. For newbies it can be quite confusing, even intimidating. I know it was for me.
 
-# huh
+
+
+# huh!?
 
 
 ## What It Does
 
-R objects can be ... "shady". There is a large variety of objects. Though they may look similar the difference can make their handling quite difficult. For newbies it can be quite confusing, even intimidating.
+The "huh?" package wants to describe objects to make it easier to understand what they are, what they contain and how to handle them. *My success measure: How many times do you open the manual?* If "huh!?" reduces the number of occasions you start browsing through pages of the manual or your favourite R textbook, in that case this package is a huge success.
 
-The "huh?" package wants to describe objects to make it easier to understand what they contain and how to handle them.
+It basically offers only two functions:
+
+1. `huh()`
+1. `how()`
+
+... because "Huh!?" must be easy to learn. You do not need to learn many functions and arguments by heart. You simply ask `huh(myObject)` or `how(myObject)` in the console and get your result.
 
 
+**huh**. `huh()` describes an object. It gives you the basic **type**, the **class**, any **attributes** including the number of dimensions, and on what **paradigm** the object is based on. The paradigm tells you whether the object is based on S3, S4, reference or R6 classes.
 
-## Example
+
+**Example**.
 
 
 ```{r huh1, eval=TRUE, include=TRUE}
 library(huh)
 huh(1:3)
+
 xy <- matrix(1:4, 2)
 huh(xy)
+
 huh(mean)
 ```
+
+**how**. `how()` tells you how you can access the contents of an object, which subsetting techniques work, and what the resulting type would be. Also for several objects `how()` provides further information that is useful when you use the objects.
+
+The output groups subsetting techniques by output type so that it is quite easy what the output of a subsetting operation looks like. A matrix returns an atomic vector when the subset is 1-dimensional unless you add the argument `drop=FALSE`. But since `drop=TRUE` is the default `how()` shows you this:
+
+```r
+#> vector 
+#> y[c(...)], y[c(...), ...], y[[...]]
+```
+
+The first line is the output type. The second line shows ways to subset the matrix that will return this type. `...` means that you can only use a single number or string as index; `c(...)` allows using a vector of indices.
+
+
+**Example**.
+
+```{r how1, eval=TRUE, include=TRUE}
+library(huh)
+# atomic vector
+x <- 1:3
+how(x)
+
+# 2-dimensional access
+y <- matrix(1:4, 2)
+how(y)
+
+# function (...well, a closure to be exact)
+how(mean) # not subsettable
+```
+
+That is all you need to know. 
+
 
 
 ## Installation
@@ -55,7 +99,20 @@ devtools::install_github("SigurdJanson/huh")
 ```
 
 
+## Roadmap
 
-<!-- `huh` distinguishes different OOP paradigms with the field `paradigm`. -->
+The two big steps that are still missing.
+
+* **Improved formatting** to enhance readability and bring attention to the essential details of the output.
+* Enhanced **ease of use** of the output. It should be possible to just copy/paste output to use it.
+
+
+Take a look at the [issues of the repository](https://github.com/SigurdJanson/huh/issues) if you want to know details.
+
+
+
+## Further Reading
+
+Norberg, R. (2012). [Classes and Objects in R](https://www.r-bloggers.com/2012/10/classes-and-objects-in-r/). R Bloggers. *last access 2022-08-20*
 
 
