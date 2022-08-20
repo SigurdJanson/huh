@@ -145,7 +145,10 @@ test_that("factor", {
   expect_named(result, .NamesOfHow)
   expect_identical(result$name, "obj")
   expect_identical(result$ops, list(vector = c("[c(...)]", "[[...]]")))
-  expect_match(result$comments, "Access")
+  expect_match(result$comments[1], "Access")
+  expect_match(result$comments[2], "subsetting with `\\[]`")
+  expect_match(result$comments[3], "drop=TRUE")
+  expect_match(result$comments[4], "Access")
 })
 
 

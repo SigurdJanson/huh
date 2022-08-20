@@ -193,7 +193,11 @@ how.factor <- function(x) {
   result <- .how_atomic(x, deparse(substitute(x)))
 
   result$comments <- append(
-    sprintf("Access the levels using 'levels(%s)' or 'nlevels(%s)'", result$name, result$name),
+    c(
+      sprintf("Access the levels using 'levels(%s)' or 'nlevels(%s)'", result$name, result$name),
+      "By default, subsetting with `[]` keeps all factor levels.",
+      "Add the argument `drop=TRUE` to keep only needed levels."
+    ),
     result$comments)
   return(result)
 }
