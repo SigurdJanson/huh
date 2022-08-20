@@ -69,13 +69,13 @@
 #' print(huh(matrix(1:12, 4)), lang="S")
 print.huh <- function(x, lang = c("R", "S"), ...) {
   lang <- match.arg(lang)
-  x <- switch(lang,
+  px <- switch(lang,
          R = x[!(names(x) %in% .sTypes)],
          S = x)
 
-  x$attr <- x$attr[!(x$attr %in% .redundantAttrs)]
+  px$attr <- x$attr[!(x$attr %in% .redundantAttrs)]
 
-  .tableprint(names(x), x, enum=list(class=", ", paradigm=", "))
+  .tableprint(names(px), px, enum=list(class=", ", paradigm=", "))
   return(invisible(x))
 }
 
