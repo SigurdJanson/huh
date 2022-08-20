@@ -47,7 +47,8 @@
 #' @param lang Indicates which properties should be printed.
 #' Either "R" (default) or "S". See details.
 #' @param ... Additional arguments passed on to `format()`.
-#' @details `lang="S"` also prints an object's \code{\link[=mode]{mode}} and \code{\link[=storage.mode]{storage mode}}.
+#' @details `lang="S"` also prints an object's \code{\link[=mode]{mode}}
+#' and \code{\link[=storage.mode]{storage mode}}.
 #' These properties are redundant in R, where you only need [typeof()].
 #' Mode and storage mode "exist solely for S compatibility" (Wickham, 2017)
 #' and are usually not displayed.
@@ -58,6 +59,7 @@
 #'
 #' @examples
 #' print(huh(1:3))
+#' print(huh(matrix(1:12, 4)), lang="S")
 print.huh <- function(x, lang = c("R", "S"), ...) {
   lang <- match.arg(lang)
   x <- switch(lang,
