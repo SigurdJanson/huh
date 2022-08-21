@@ -19,22 +19,78 @@ Sys.setenv(lang = "en_US")
 library(huh)
 ```
 
-
-
-Learning R can be hard. The language has grown and developed over several generations and it is carried by a community which is very much alive. The R core team holds everything together with a certain conservative attitude. R objects can be confusing for a newbie. Not only is there large variety of objects (that is quite normal for modern programming languages). The underlying paradigms vary. Though they may look similar the difference can make their handling quite difficult. 
+Learning R can be hard. The language has grown and developed over several generations and it is carried by a community which is very much alive. The R core team holds everything together with a certain conservative attitude. R objects can be confusing for a newbie. Not only is there large variety of objects (that is quite normal for modern programming languages). The underlying paradigms vary. Though they may look similar the difference can make their handling quite difficult.
 
 The "huh?" package wants to describe objects to make it easier to understand what they contain and how to handle them.
 
 
 
+# Objects
 
-# Data Objects
+"Everything in R is an object". One of the most fundamental things and the first sentence of many introductions into R (e.g. [Douglas et al., 2022](https://intro2r.com/objects-in-r.html); Chambers, 2009, for details). Now, after reading such an introduction to R the following is surprising:
 
-... (TBD)
+```{r echo=TRUE}
+x <- c(1, 2, 3)
+is.object(x)
+```
 
-## Subsetting
+To make it worse you can request the `objects()`. As you can see, now `x` is listed as one of the "objects". Now! Is x an object or not? That can be explained, yes, but how can that not be confusing to a beginner? `is.object()` ignores implicit types, when, in fact, implicit types are objects, too. But `is.object()` is meant to identify "explicit" objects. So, ...
 
-`how()` shows some ways to subset an object. That can be difficult at the beginning when you learn R. Wickham (2017) shows five different ways to extract a single value from a data frame. And you can easily recombine these five solutions to create even more.
+> in R everything is **indeed** an object.
+
+Which means we can investigate everything in a similar way to understand how it is working.
+
+
+
+## Data
+
+Of course, you can use `huh()` for a first overview over an object. It is not necessary to check type and class and attributes. You can with one command. `huh()` give you all the basic properties of an object in one output:
+
+| Property | Content | Comment |
+|----------|---------|---------|
+| name     | The expression given as argument |      |
+| type     | see `typeof()`     | For functions huh will ignore some details |
+| class    | see `class()`      | Implicit **and** explicit classes    |
+| dimensions | Number of dimensions | 1 for vectors, 2 for matrices, ... |
+| attr     | see `attributes()` |      |
+| paradigm | see below |      |
+
+: Properties summarized by `huh()`.
+
+For data objects the paradigm tells you whether the object is implicit or if it is an explicit implementation of one of the object-oriented paradigms in R (i.e. S3, S4, reference, or R6 classes).
+
+You may miss two properties [`mode` and `storage.mode`](https://rdrr.io/r/base/mode.html). You can have `huh()` print these. The function does not give these by default because they are not relevant in R and only exist for compatibility to S (Wickham, 2017). If you want to see them, anyway, just type `print(huh(object), "S")`. The `lang` argument being "S" will add the two "missing" lines to the output.
+
+To understand an object you can also use [`str()`](https://rdrr.io/r/utils/str.html). It can be really useful when you are unsure about the contents of an object by giving a quick preview of contents and structure of the object.
+
+[`unclass()`](https://rdrr.io/r/base/class.html) can also be useful. When a class is derived from an internal class then R does not report the internal class, anymore. A factor is basically an integer vector. Yet, `class(factor(1:2))` returns "`r class(factor(1:2))`". With `unclass()` you remove the classification and this forces R to interpret the object as a native R object.
+
+
+
+## Functions
+
+In general, the output for functions that `huh()` gives is almost identical to that of other objects. You will never see the `dimension` property because functions cannot be concatenated. You can put several functions in a list but then you will have a list object containing functions. Also, there aren't probably many functions in the world with attributes, so `attr` will be missing, too. Theoretically, it is possible to add attributes (and even further class attributes) to a function.
+
+The paradigm property will be missing for simple functions. Generic functions or methods based on one of Rs object-oriented programming paradigms will show this using the paradigm property.
+
+R knows several types of "inherent" functions. There are *primitives* with the sub-types *builtin* and *special*. There are also *internal* and *external* functions. The code of these functions is not written in R. You can check this easily by stating the function name without brackets. R only relays the call to a primitive function with the same name:
+
+```{r echo=TRUE}
+sqrt
+```
+
+
+
+`huh()` ignores several of these differences. They are not relevant for everyday work in R. To avoid ambiguity prints the type as given by `typeof()`. But the class generalise this and only say "primitive".
+
+
+
+
+
+
+# Subsetting
+
+Subsetting can be difficult at the beginning when you learn R. Wickham (2017) shows five different ways to extract a single value from a data frame. And you can easily recombine these five solutions to create even more.
 
 ```{r 5 ways}
 # 5 subsetting ways by Wickham (2017)
@@ -62,14 +118,19 @@ typeof(ll[1]) # returns "list"
 typeof(ll[[1]]) # returns "integer"
 ```
 
-
 Subsetting in R is powerful. But (in programming) power often means complexity. This is how the idea of `how()` came up: simply type `how(myobject)` and the console will print the **alternatives to subset** this and what **return types** you can expect. If this saves beginners from opening the manual just in 1 out of 2 cases, the huh-package is a big success, because it'll save you an incredible amount of time.
-
 
 It returns an S3 object with the class `huh.how`. It is basically a list of operators nested by return type of the subset operation. An example:
 
-
 The idea of `how` is that you do not need to check the documentation if you are unsure about subsetting. Just type `how(evilobject)` and you get the basic information in the console.
+
+
+
+## How
+
+... (TBD)
+
+It is not always possible to identify the return type of an object. `how()` provides specific implementations of the implicit types and the most basic S3 objects of R. In this case, the return type can (at least mostly) be determined. If `how()` does not have a specific implementation for an object it looks for the subsetting methods `x[]`, `x[[]]`, and `x$`. If it finds an implemented method it will show the operator. In this case, it is not possible to determine the returned type. You are going to have to refer to the documentation of the operator method.
 
 
 
@@ -97,59 +158,43 @@ The fastest is `.subset2()` with numeric indices. However, the manual recommends
 
 In a normal setting these may be suitable guidelines:
 
-* Do not underestimate the simple `mtcars[32, 11]`. It has the most intuitive readability (IMHO) and provides the highest flexibility. Personally, without additional requirements this is always my first choice; especially when I do not write code only for myself.
-* If you want more speed the pattern `mtcars$carb[c(...)]` is your friend. The disadvantage is that you cannot use variables or numeric indices with `$`. Another disadvantage is that you can only pick one column at a time.
-* If you need to pick values using variables `mtcars[[11]][32]` is still quite fast. Again, you can only pick a single column with this.
-  
+-   Do not underestimate the simple `mtcars[32, 11]`. It has the most intuitive readability (IMHO) and provides the highest flexibility. Personally, without additional requirements this is always my first choice; especially when I do not write code only for myself.
+-   If you want more speed the pattern `mtcars$carb[c(...)]` is your friend. The disadvantage is that you cannot use variables or numeric indices with `$`. Another disadvantage is that you can only pick one column at a time.
+-   If you need to pick values using variables `mtcars[[11]][32]` is still quite fast. Again, you can only pick a single column with this.
 
 
 
-# Functions
 
-... (TBD)
+# About Types in R
 
-
-# Special Issues
-
-## How to identify a generic S3 function?
-
-The clearest way is to find a call to `UseMethod()` in the body of the function. That is how `utils::isS3stdGeneric()` and `roxygen2::is_s3_generic()` do it. But that does not help with internal generics which are implemented in C. The only way to handle those is to get an exhaustive list of internal S3 generics. But how can one do that?
-
-The `tools` package provides `.get_internal_S3_generics()`. This function does not seem to be safe. This function uses `.S3PrimitiveGenerics`. Because this list is incomplete it adds several names that are hard-coded in the function. That does not feel reliable.
-
-There is another function that collects all internal generics in the package `R.methodsS3`. The local function `knownInternalGenericS3()` combines `names(.knownS3Generics)` and `.S3PrimitiveGenerics`. It further adds `tools::.get_internal_S3_generics()` if the package is available. At least this way we avoid a hard dependency. And, finally, the functions `cbind` and `rbind` are added.
-
-After checking these functions and hours of research there may be a better way.  According to [R Internals: "Prototypes for primitives"](https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Prototypes-for-primitives) `names(.GenericArgsEnv)` is an environment in the base package for those primitives which are internal S3 generics. And indeed, it provides lots of function names. 
-
-The situation is rather confusing. Several different collections of internal generics but none of them seems complete. After comparing these lists:
-
-* `cbind` and `rbind` would be already included  a union of `names(.knownS3Generics)` and `names(.GenericArgsEnv)`.
-* So are the elements of `.S3PrimitiveGenerics`.
-
-The cleanest way to get a list of 
-
-1. Create a union of `names(.knownS3Generics)` and `names(.GenericArgsEnv)`.
-2. Check if the `tools` package and it's function `.get_internal_S3_generics()` are available. If so, add it's result.
-
-
-## How to identify an S3 method?
-
-... (TBD)
+As a basis I recommend the [chapter about object-oriented programming in "Advanced R"](https://adv-r.hadley.nz/oo.html) (Wickam, 2022).
 
 
 
 ## R Objects
 
-Notes: 
-
-* `S3` classes are marked.
-* Obvious attributes are omitted, like a `class` attribute of an S3 class.
-* For obvious reasons, derived objects share the attributes and data structure with their parents and are not repeated.
+The following image shows the most fundamental types in R.
 
 
 ![Object hierarchy in R](img/classtree.png)
 
-## Object Types
+Notes about the tree: 
+
+* `S3` classes are marked.
+* Obvious attributes are omitted, like a class attribute of an S3 class.
+* The `vector` and `atomic` is marked as "abstract" because it is not a type that can used in interpreted code. In effect, the developer always uses one of the derived types.
+* For obvious reasons, derived objects share the attributes and data structure with their parents and are not repeated.
+
+Notes about the objects:
+
+* The S expression `SEXP` is the basic internal representation for all objects in R. It is not accessible
+* `promise`, `raw` vectors and `pairlist` objects are used as internal objects of R. They are rarely used in interpreted code.
+* Though an expression is a language object, "R internals" state that "'expressions' / 'language objects' are mainly \[language] (`LANGSXP`), but can be symbols (`SYMSXP`) or expression vectors (`EXPRSXP`)." Earlier it says "expressions are [...] a vector of (usually language) objects". So, it is a bit fuzzy what expressions actually are.
+* `array` or `matrix` objects are actually vectors. They can be of any of the other vectors types. What makes them multidimensional objects is the `dim` attribute. Because of this attribute R interprets them as multidimensional and allows you to subset these objects accordingly.
+
+
+
+## Examples of Object Types
 
 Here is an overview over types:
 
@@ -171,32 +216,87 @@ library(rmarkdown)
   as.data.frame(mex3) |> knitr::kable("markdown") 
 ```
 
+`myfunkyfunc` is a function with a class assigned to it.
 
-Wickham (2017) confirms that `mode()` and `storage.mode()` are not really needed in R: "I recommend ignoring these functions because they’re just aliases of the names returned by `typeof()`, and exist solely for S compatibility." What is important are the basic types (`typeof()`) and the class. The class can be an implicit class provided by R. In that case it does not add much information to the type. 
+Wickham (2017) confirms that `mode()` and `storage.mode()` are not really needed in R: "I recommend ignoring these functions because they're just aliases of the names returned by `typeof()`, and exist solely for S compatibility." What is important are the basic types (`typeof()`) and the class. The class can be an implicit class provided by R. In that case it does not add much information to the type.
+
+
+
+## Trivia
+
+I have tried to highlight the complexities of R by quoting certain strange and funny trivia. R has quite a few of those.
+
+
+### Hidden Lists
+
+You can create a hidden contents in R. With the following code you can create a list of a list. So far so good. Now as soon as you create a override for the `[[` subsetting operator that returns the object itself you can hide the content inside. Nobody is able to access the content anymore. The implementation of `str()` is aware of this issue and describes the object as "hidden" (see the second call to `str()`). But what is really strange: if you try to investigate this object in RStudio with `View(y)` you will get an endless tree. You can open node after node and you'll never reach the bottom. Try it.
+
+```{r echo=TRUE}
+  y <- structure(list(list(a=1, b=2)), class="mine")
+  str(y)
+  
+  `[[.mine` <- function(x, i) if (i == 1) x else NULL
+  
+  str(y)
+```
+
+
+
+# Implementation Details
+
+## How to identify a generic S3 function?
+
+The clearest way is to find a call to `UseMethod()` in the body of the function. That is how `utils::isS3stdGeneric()` and `roxygen2::is_s3_generic()` do it. But that does not help with internal generics which are implemented in C. The only way to handle those is to get an exhaustive list of internal S3 generics. But how can one do that?
+
+The `tools` package provides `.get_internal_S3_generics()`. This function does not seem to be safe. This function uses `.S3PrimitiveGenerics`. Because this list is incomplete it adds several names that are hard-coded in the function. That does not feel reliable.
+
+There is another function that collects all internal generics in the package `R.methodsS3`. The local function `knownInternalGenericS3()` combines `names(.knownS3Generics)` and `.S3PrimitiveGenerics`. It further adds `tools::.get_internal_S3_generics()` if the package is available. At least this way we avoid a hard dependency. And, finally, the functions `cbind` and `rbind` are added.
+
+After checking these functions and hours of research there may be a better way. According to [R Internals: "Prototypes for primitives"](https://cran.r-project.org/doc/manuals/r-release/R-ints.html#Prototypes-for-primitives) `names(.GenericArgsEnv)` is an environment in the base package for those primitives which are internal S3 generics. And indeed, it provides lots of function names.
+
+The situation is rather confusing. Several different collections of internal generics but none of them seems complete. After comparing these lists:
+
+-   `cbind` and `rbind` would be already included a union of `names(.knownS3Generics)` and `names(.GenericArgsEnv)`.
+-   So are the elements of `.S3PrimitiveGenerics`.
+
+The cleanest way to get a list of
+
+1.  Create a union of `names(.knownS3Generics)` and `names(.GenericArgsEnv)`.
+2.  Check if the `tools` package and it's function `.get_internal_S3_generics()` are available. If so, add it's result.
+
+
+
+
+## How to identify an S3 method?
+
+Currently, this package uses `utils::isS3method(...)` to check if a function is an S3 method.
+
+
 
 
 
 
 # Sources
 
+Bengtsson, H. [*The R.oo package - Object-Oriented Programming with References Using Standard R Code*](https://www.r-project.org/conferences/DSC-2003/Proceedings/Bengtsson.pdf), Proceedings of the 3rd International Workshop on Distributed Statistical Computing (DSC 2003), ISSN 1609-395X, Hornik, K.; Leisch, F. & Zeileis, A. (ed.), 2003. ([`R.methodsS3` package code](https://github.com/cran/R.methodsS3/blob/master/R))
 
-Bengtsson, H. [The R.oo package - Object-Oriented Programming with References Using Standard R Code](https://www.r-project.org/conferences/DSC-2003/Proceedings/Bengtsson.pdf), Proceedings of the 3rd International Workshop on Distributed Statistical Computing (DSC 2003), ISSN 1609-395X, Hornik, K.; Leisch, F. & Zeileis, A. (ed.), 2003. ([`R.methodsS3` package code](https://github.com/cran/R.methodsS3/blob/master/R))
+Chambers, J. M. (2009). [*Facets of R*](https://journal.r-project.org/archive/2009-1/RJournal_2009-1_Chambers.pdf). The R Journal, 1 (1).
 
-Gupta, Suraj (2012). _[How R Searches and Finds Stuff](https://blog.thatbuthow.com/how-r-searches-and-finds-stuff/)_. accessed 2022-08-16
+Douglas, A., Roos, D., Mancini, F., Couto, A. & Lusseau, D. (2022). [*An Introduction to R*](https://intro2r.com/). July 22, 2022
 
-R Core Team (2022). _[R: A language and environment for statistical computing](https://www.R-project.org/)_. R Foundation for Statistical Computing, Vienna, Austria.
-* Package [tools](https://github.com/wch/r-source/tree/79298c499218846d14500255efd622b5021c10ec/src/library/tools)
-* Package [utils]()
 
-R core team (2022). _[R Internals](https://cran.r-project.org/doc/manuals/r-release/R-ints.html)_. created for R, version 4.2.1, 2022-06-23.
+Gupta, Suraj (2012). [*How R Searches and Finds Stuff*](https://blog.thatbuthow.com/how-r-searches-and-finds-stuff/). accessed 2022-08-16
 
-R core team (2022). _[R Language Definition](https://cran.r-project.org/doc/manuals/r-release/R-lang.html)_. created for R, version 4.2.1, 2022-06-23.
+R Core Team (2022). [*R: A language and environment for statistical computing*](https://www.R-project.org/). R Foundation for Statistical Computing, Vienna, Austria. * Package [tools](https://github.com/wch/r-source/tree/79298c499218846d14500255efd622b5021c10ec/src/library/tools) * Package [utils]()
 
-Wickham, Hadley (2017). _[Advanced R](http://adv-r.had.co.nz/OO-essentials.html)_. 1st edition.
+R core team (2022). [*R Internals*](https://cran.r-project.org/doc/manuals/r-release/R-ints.html). created for R, version 4.2.1, 2022-06-23.
 
-Wickham, Hadley (2019). [sloop: Helpers for 'OOP' in R](https://CRAN.R-project.org/package=sloop). R package version 1.0.1. 
+R core team (2022). [*R Language Definition*](https://cran.r-project.org/doc/manuals/r-release/R-lang.html). created for R, version 4.2.1, 2022-06-23.
 
-Wickham, Hadley (2021). _[Advanced R](https://adv-r.hadley.nz/oo.html)_. 2nd edition. Chapman & Hall.
+Wickham, Hadley (2017). [*Advanced R*](http://adv-r.had.co.nz/OO-essentials.html). 1st edition.
 
-Wickham H., Danenberg P., Csárdi G., Eugster M. (2022). _[roxygen2: In-Line Documentation for R](https://CRAN.R-project.org/package=roxygen2)_. R package version 7.2.1.
+Wickham, Hadley (2019). [sloop: Helpers for 'OOP' in R](https://CRAN.R-project.org/package=sloop). R package version 1.0.1.
 
+Wickham, Hadley (2021). [*Advanced R*](https://adv-r.hadley.nz/oo.html). 2nd edition. Chapman & Hall.
+
+Wickham H., Danenberg P., Csárdi G., Eugster M. (2022). [*roxygen2: In-Line Documentation for R*](https://CRAN.R-project.org/package=roxygen2). R package version 7.2.1.
