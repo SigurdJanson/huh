@@ -153,6 +153,10 @@ Take a look at the [issues of the
 repository](https://github.com/SigurdJanson/huh/issues) if you want to
 know details.
 
+If you find anything suspicious or you have an idea, just let me know. I
+am just a regular guy, not an R wizard and I am just trying to be a bit
+helpful, here. So don’t hesitate if you notice something.
+
 ## Further Reading
 
 Norberg, R. (2012). [Classes and Objects in
