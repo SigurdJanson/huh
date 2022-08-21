@@ -49,6 +49,7 @@ whether the object is based on S3, S4, reference or R6 classes.
 
 ``` r
 library(huh)
+# integer vector
 huh(1:3)
 #> name      : 1:3
 #> type      : integer
@@ -56,6 +57,7 @@ huh(1:3)
 #> dimensions: 1
 #> paradigm  : implicit, object
 
+# integer matrix
 xy <- matrix(1:4, 2)
 huh(xy)
 #> name      : xy
@@ -64,6 +66,7 @@ huh(xy)
 #> dimensions: 2
 #> paradigm  : implicit, object
 
+# function (i.e. a closure to be exact)
 huh(mean)
 #> name    : mean
 #> type    : closure
@@ -143,6 +146,8 @@ The two big steps that are still missing.
     to the essential details of the output.
 -   Enhanced **ease of use** of the output. It should be possible to
     just copy/paste output to use it.
+-   Finish an accompanying vignette about this package and types in R,
+    in general.
 
 Take a look at the [issues of the
 repository](https://github.com/SigurdJanson/huh/issues) if you want to
