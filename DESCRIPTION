@@ -1,6 +1,6 @@
 Package: huh
 Title: Provide detailed information about R objects 
-Version: 0.0.0.95
+Version: 1.0.0
 Authors@R: 
     person(given = "Jan",
            family = "Seifert",

@@ -75,7 +75,7 @@ print.huh <- function(x, lang = c("R", "S"), ...) {
 
   px$attr <- x$attr[!(x$attr %in% .redundantAttrs)]
 
-  .tableprint(names(px), px, enum=list(class=", ", paradigm=", "))
+  .tableprint(names(px), px, enum=list(class=", ", paradigm=", ", attr=", "))
   return(invisible(x))
 }
 
