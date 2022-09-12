@@ -1,11 +1,13 @@
 
 # print.huh ===========
 
-test_that("Arguments lang='S' and 'R' deliver different results", {
+cli::test_that_cli("Arguments lang='S' and 'R' deliver different results", {
   SOutput <- c("mode", "storage mode")
   # Act
-  resultR <- capture_output_lines(print(huh(1:3)))
-  resultS <- capture_output_lines(print(huh(1:3), lang="S"))
+  #resultR <- capture_output_lines(print(huh(1:3)))
+  #resultS <- capture_output_lines(print(huh(1:3), lang="S"))
+  resultR <- cli::cli_fmt(print(huh(1:3)))
+  resultS <- cli::cli_fmt(print(huh(1:3), lang="S"))
 
   # Assert
   # * length
@@ -24,7 +26,7 @@ test_that("result of 'print.huh' is identical to input", {
                       "Male", "Theater", 17, "OldAge", "Late Works")
 
   # Act
-  capture_output_lines(
+  cli::cli_fmt(
     result <- print(Mephisto)
   )
 

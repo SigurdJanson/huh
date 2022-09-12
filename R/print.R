@@ -10,7 +10,7 @@
   type   = "{.help [type](base::typeof)}",
   class  = "{.help [class](base::class)}",
   mode   = "{.help [mode](base::mode)}",
-  `storage mode` = "{.help [storage.mode](base::mode)}"#,
+  `storage mode` = "{.help [storage mode](base::mode)}"#,
   #dimensions = "{.run [dimensions](base::dim({%s}))}" #{.run [snapshot_review()](testthat::snapshot_review())}
 )
 
