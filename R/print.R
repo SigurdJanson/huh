@@ -16,16 +16,21 @@
 
 # List of basic types in the base package.
 # `print.*`  use these to link to the documentation
-.basetypes <- c("logical", "integer", "double", "numeric", "complex", "character", "raw",
-                "list", "data.frame", "factor", "ts", "array", "matrix",
-                "call", "expression", "name")
+.basetypes <- c(logical = "logical", integer = "integer", double = "double",
+                numeric = "numeric", complex = "complex", character = "character", raw = "raw",
+                list = "list", data.frame = "data frame", factor = "factor",
+                array = "array", matrix = "matrix",
+                call = "call", expression = "expression", name = "name")
+.statstypes <- c(ts = "time series")
 
 
 
 .addclihelp <- function(x) {
   .add <- function(.x) {
-    if (.x %in% .basetypes)
-      sprintf("{.topic [%s](base::%s)}", .x, .x)
+    if (.x %in% names(.basetypes))
+      sprintf("{.topic [%s](base::%s)}", .basetypes[.x], .x)
+    else if (.x %in% names(.statstypes))
+      sprintf("{.topic [%s](stats::%s)}", .statstypes[.x], .x)
     else
       .x
   }
