@@ -25,6 +25,17 @@
 
 
 
+#' .addclihelp
+#'
+#' Looks up the strings in the vector. If the string represents a known R type from base
+#' R or stats it will format the string so that printing it with `cli` will
+#' link to the correct help topic. Not all types are supported. Only the most basic ones.
+#' See `.basetypes` and `.statstypes` for details.
+#' @param x A character vector
+#'
+#' @return A string to support cli formatting and links.
+#' @keywords internal
+#' @noRd
 .addclihelp <- function(x) {
   .add <- function(.x) {
     if (.x %in% names(.basetypes))
