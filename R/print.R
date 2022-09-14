@@ -14,11 +14,24 @@
   #dimensions = "{.run [dimensions](base::dim({%s}))}" #{.run [snapshot_review()](testthat::snapshot_review())}
 )
 
+# List of basic types in the base package.
+# `print.*`  use these to link to the documentation
 .basetypes <- c("logical", "integer", "double", "numeric", "complex", "character", "raw",
-                "list", "data.frame", "ts", "array", "matrix",
+                "list", "data.frame", "factor", "ts", "array", "matrix",
                 "call", "expression", "name")
 
 
+
+.addclihelp <- function(x) {
+  .add <- function(.x) {
+    if (.x %in% .basetypes)
+      sprintf("{.topic [%s](base::%s)}", .x, .x)
+    else
+      .x
+  }
+
+  sapply(x, .add, USE.NAMES=FALSE)
+}
 
 
 #' .tableprint
@@ -38,18 +51,21 @@
 #' @return `invisible(NULL)`
 #' @keywords internal
 #' @noRd
-#-----importFrom cli cli_div cli_end cli_text
 .tableprint <- function(labels, statements, enum = NULL, ...) {
   .print <- function(l, s) {
     l <- gsub("\\.", " ", l)
+
+    if (usecli)
+      s <- .addclihelp(s)
+
     if (!is.null(enum) && l %in% names(enum))
       s <- paste0(s, collapse = enum[[l]])
 
     if (usecli) {
       if (l %in% names(.huh.help))
         l <- .huh.help[[l]]
-      if (s %in% .basetypes)
-        s <- sprintf("{.topic [%s](base::%s)}", s, s)
+      # if (s %in% .basetypes)
+      #   s <- sprintf("{.topic [%s](base::%s)}", s, s)
       cli::cli_text(paste(format(l, width=lwidth, ...), ": ", s, "\n", sep=""))
     } else {
       cat(format(l, width=lwidth, ...), ": ", s, "\n", sep="")
@@ -61,11 +77,12 @@
   # Remove NULL elements, first
   labels <- labels[lengths(statements) > 0]
   statements <- statements[lengths(statements) > 0]
+  # Column width for labels
+  lwidth <- max(nchar(labels))
 
   if (usecli)
     cli_container <- cli::cli_div()
-  # Column width for labels
-  lwidth <- max(nchar(labels))
+
   mapply(.print, labels, statements)
 
   if (usecli)
