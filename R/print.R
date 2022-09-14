@@ -56,7 +56,7 @@
 #' @return `invisible(NULL)`
 #' @keywords internal
 #' @noRd
-.tableprint <- function(labels, statements, enum = NULL, ...) {
+.tableprint <- function(labels, statements, enum = NULL, usecli = FALSE, ...) {
   .print <- function(l, s) {
     l <- gsub("\\.", " ", l)
 
@@ -76,8 +76,6 @@
       cat(format(l, width=lwidth, ...), ": ", s, "\n", sep="")
     }
   }
-
-  usecli <- requireNamespace("cli", quietly = TRUE)
 
   # Remove NULL elements, first
   labels <- labels[lengths(statements) > 0]
@@ -127,7 +125,9 @@ print.huh <- function(x, lang = c("R", "S"), ...) {
 
   px$attr <- x$attr[!(x$attr %in% .redundantAttrs)]
 
-  .tableprint(names(px), px, enum=list(class=", ", paradigm=", ", attr=", "))
+  .tableprint(names(px), px, enum=list(class=", ", paradigm=", ", attr=", "),
+              usecli = requireNamespace("cli", quietly = TRUE))
+
   return(invisible(x))
 }
 

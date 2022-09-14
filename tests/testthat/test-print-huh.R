@@ -1,7 +1,7 @@
 
 # print.huh ===========
 
-cli::test_that_cli("Arguments lang='S' and 'R' deliver different results", {
+cli::test_that_cli("Arguments lang='S' and 'R' deliver different results for `cli`", {
   SOutput <- c("mode", "storage mode")
   # Act
   #resultR <- capture_output_lines(print(huh(1:3)))
@@ -16,9 +16,38 @@ cli::test_that_cli("Arguments lang='S' and 'R' deliver different results", {
   for (s in SOutput)
     expect_true( any(startsWith(resultS, s)) )
   # * mode, storage mode, ... are NOT part of R result
-  for (r in SOutput)
-    expect_false( any(startsWith(resultR, r)) )
+  for (s in SOutput)
+    expect_false( any(startsWith(resultR, s)) )
 })
+
+
+test_that("Arguments lang='S' and 'R' deliver different results (plain output, no cli)", {
+
+  # Make sure `requireNamespace` never returns TRUE.
+  mockCLIMissing <- mockery::mock(FALSE, FALSE, cycle = FALSE)
+  mockery::stub(print.huh, "requireNamespace", mockCLIMissing)
+  #mockery::stub(.tableprint, "requireNamespace", mockCLIMissing, depth=1L)
+
+  SOutput <- c("mode", "storage mode")
+  # Act
+  resultR <- capture_output_lines(print(huh(1:3)))
+  resultS <- capture_output_lines(print(huh(1:3), lang="S"))
+
+  # Assert
+  mockery::expect_called(mockCLIMissing, 2L)
+  mockery::expect_args(mockCLIMissing, 2L, "cli", quietly = TRUE)
+  # * length
+  expect_identical(length(resultS), length(resultR)+length(SOutput))
+  # * mode, storage mode, ... are part of S result
+  for (s in SOutput)
+    expect_true( any(startsWith(resultS, s)) )
+  # * mode, storage mode, ... are NOT part of R result
+  for (s in SOutput)
+    expect_false( any(startsWith(resultR, s)) )
+
+})
+
+
 
 
 test_that("result of 'print.huh' is identical to input", {
@@ -26,7 +55,7 @@ test_that("result of 'print.huh' is identical to input", {
                       "Male", "Theater", 17, "OldAge", "Late Works")
 
   # Act
-  cli::cli_fmt(
+  cli::cli_fmt(#capture output to avoid `print` during test
     result <- print(Mephisto)
   )
 

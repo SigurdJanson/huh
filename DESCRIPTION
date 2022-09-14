@@ -16,6 +16,7 @@ Imports:
 Suggests: 
     cli (>= 3.4.0),
     testthat (>= 3.0.0),
+    mockery,
     knitr,
     rmarkdown,
     bench,
