@@ -19,6 +19,7 @@
 .basetypes <- c(logical = "logical", integer = "integer", double = "double",
                 numeric = "numeric", complex = "complex", character = "character", raw = "raw",
                 list = "list", data.frame = "data frame", factor = "factor",
+                Date = "Date", POSIXct = "POSIXct", POSIXlt = "POSIXlt", POSIXt = "POSIXt",
                 array = "array", matrix = "matrix",
                 call = "call", expression = "expression", name = "name")
 .statstypes <- c(ts = "time series")
