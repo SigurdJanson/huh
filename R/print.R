@@ -119,6 +119,9 @@
 #' These properties are redundant in R, where you only need [typeof()].
 #' Mode and storage mode "exist solely for S compatibility" (Wickham, 2017)
 #' and are usually not displayed.
+#'
+#' If available the `cli` package will be used for output. But only in an [interactive]
+#' environment.
 #' @return Returns `x` invisibly
 #' @references
 #' Wickham, H. (2017). [Advanced R](http://adv-r.had.co.nz/OO-essentials.html). 1st edition.
@@ -132,11 +135,11 @@ print.huh <- function(x, lang = c("R", "S"), ...) {
   px <- switch(lang,
          R = x[!(names(x) %in% .sTypes)],
          S = x)
-
   px$attr <- x$attr[!(x$attr %in% .redundantAttrs)]
 
-  .tableprint(names(px), px, enum=list(class=", ", paradigm=", ", attr=", "),
-              usecli = requireNamespace("cli", quietly = TRUE))
+  usecli = requireNamespace("cli", quietly = TRUE) && interactive()
+
+  .tableprint(names(px), px, enum=list(class=", ", paradigm=", ", attr=", "), usecli)
 
   return(invisible(x))
 }

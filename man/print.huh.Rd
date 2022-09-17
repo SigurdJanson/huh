@@ -26,6 +26,9 @@ and \code{\link[=storage.mode]{storage mode}}.
 These properties are redundant in R, where you only need \code{\link[=typeof]{typeof()}}.
 Mode and storage mode "exist solely for S compatibility" (Wickham, 2017)
 and are usually not displayed.
+
+If available the \code{cli} package will be used for output. But only in an \link{interactive}
+environment.
 }
 \examples{
 print(huh(1:3))
