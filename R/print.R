@@ -81,8 +81,6 @@
     if (usecli) {
       if (l %in% names(.huh.help))
         l <- .huh.help[[l]]
-      # if (s %in% .basetypes)
-      #   s <- sprintf("{.topic [%s](base::%s)}", s, s)
       cli::cli_text(paste(format(l, width=lwidth, ...), ": ", s, "\n", sep=""))
     } else {
       cat(format(l, width=lwidth, ...), ": ", s, "\n", sep="")
