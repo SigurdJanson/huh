@@ -21,7 +21,8 @@
                 list = "list", data.frame = "data frame", factor = "factor",
                 Date = "Date", POSIXct = "POSIXct", POSIXlt = "POSIXlt", POSIXt = "POSIXt",
                 array = "array", matrix = "matrix",
-                call = "call", expression = "expression", name = "name")
+                call = "call", expression = "expression", name = "name",
+                `function` = "function", closure = "function")
 .statstypes <- c(ts = "time series")
 
 
