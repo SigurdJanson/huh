@@ -52,3 +52,35 @@ depth <- function(x, current = 0L) {
   return(NA)
 }
 
+
+
+#' is.mixed
+#'
+#' @param x a list
+#' @param f a function used on each element. `typeof()` by default, but any other function
+#' can be used.
+#' @param recursive By default `is.mixed()` goes through the entire nestings of the list
+#' (default: `TRUE`). If `FALSE` only the first level will be analysed.
+#' @details `is.mixed` returning `TRUE` implies that `unlist()` will cause some an implicit
+#' type coercion on some list elements.
+#' @return `TRUE` if all objects in the list `x` yield the same result `f(x)`. `NA` if `x` is
+#' not a list.
+#' @export
+#'
+#' @examples
+#' is.mixed(list(1, 2, 2L:3L, 4, 5))
+#' is.mixed(list(1L, 2L, 2L:3L, 4L, 5L))
+is.mixed <- function(x, f=typeof, recursive=TRUE) { # has mixed types
+  if (!is.list(x)) return(NA)
+  # storage.mode already maps "closure", "builtin" and "special" to "function
+  if (storage.mode(f) != "function")
+    stop("'f' must be a function")
+
+  if (recursive)
+    result <- rapply(x, f, how = "unlist")
+  else
+    result <- sapply(x, f)
+
+  result <- result |> unique() |> length()
+  return(result > 1L)
+}
