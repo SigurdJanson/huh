@@ -1,12 +1,13 @@
 Package: huh
 Title: Provide detailed information about R objects 
-Version: 1.0.0
+Version: 2.0.0
 Authors@R: 
     person(given = "Jan",
            family = "Seifert",
            role = c("aut", "cre"),
            email = "github@sigurdjanson.anonaddy.com")
-Description: What the package does (one paragraph).
+Description: 'huh!?!?' is supposed to make the life of R beginners easier. 
+    It provides detailed information about R objects on what they are and how they can be subset.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
